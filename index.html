@@ -92,6 +92,13 @@
   .add{margin-top:9px;background:none;border:1.5px dashed var(--line);color:var(--muted);border-radius:9px;padding:7px;font-size:13px;cursor:pointer;width:100%;font-family:inherit}
   .add:hover{border-color:var(--pine2);color:var(--pine2)}
   .cat-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+  .tasks.drop-over{outline:2px dashed var(--pine);outline-offset:3px;border-radius:10px;background:rgba(62,142,126,.06)}
+  .cat-name{cursor:text;border-radius:5px;padding:0 2px}
+  .cat-name.editing{outline:1.5px solid var(--pine);background:#fff}
+  .newcat{margin-top:14px;background:none;border:1.5px dashed var(--line);color:var(--muted);border-radius:11px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%}
+  .newcat:hover{border-color:var(--pine);color:var(--pine)}
+  .catdel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;opacity:.45;padding:0 4px;line-height:1}
+  .catdel:hover{opacity:1;color:#c0392b}
   .hidebtn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;font-size:11px;font-weight:700;padding:4px 9px;cursor:pointer;font-family:inherit;white-space:nowrap}
   .hidebtn.on{background:var(--pine);color:#fff;border-color:var(--pine)}
   .tn{flex:1 1 100%;order:5;min-width:0;cursor:text}
@@ -245,22 +252,53 @@ function taskRow(room,tk,i,showRoomDot){
     nameSpan.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();finish(true);}else if(e.key==="Escape"){finish(false);}};
     nameSpan.onblur=()=>finish(true);
   };
-  li.ondragstart=e=>e.dataTransfer.setData("text/plain",tk.t);
+  li.ondragstart=e=>{e.dataTransfer.setData("text/plain",tk.t);e.dataTransfer.setData("application/x-task",JSON.stringify({room:room.id,i:i}));e.dataTransfer.effectAllowed="move";};
   return li;
 }
 function renderRoomsView(wrap){
   state.rooms.forEach(room=>{const done=room.tasks.filter(t=>t.d).length;let f="";for(let i=0;i<done;i++)f+=room.furn[i%room.furn.length];
     const sec=document.createElement("div");sec.className="cat";sec.id="cat-"+room.id;
     const hideBtn=`<button class="hidebtn ${state.hideDone?'on':''}" data-toggle="hide">${state.hideDone?'Show done':'Hide done'}</button>`;
-    sec.innerHTML=`<div class="cat-header"><h3><span class="dot" style="background:${room.dot}"></span>${room.name}<span class="cf">${f}</span></h3>${hideBtn}</div><div class="cc">${done}/${room.tasks.length} done</div><div class="sub">Tap a task to edit · tap priority to cycle · tap date to set · drag to Today.</div>`;
+    sec.innerHTML=`<div class="cat-header"><h3><span class="dot" style="background:${room.dot}"></span><span class="cat-name" title="click to rename">${room.name}</span><span class="cf">${f}</span></h3><div style="display:flex;align-items:center;gap:6px">${hideBtn}<button class="catdel" title="delete category">🗑</button></div></div><div class="cc">${done}/${room.tasks.length} done</div><div class="sub">Tap a task to edit · tap priority to cycle · tap date to set · drag to Today.</div>`;
     const ul=document.createElement("ul");ul.className="tasks";
     room.tasks.forEach((tk,i)=>{if(state.hideDone&&tk.d)return;ul.appendChild(taskRow(room,tk,i,false));});
     sec.appendChild(ul);
     const add=document.createElement("button");add.className="add";add.textContent="+ add a task";
     add.onclick=()=>{const v=prompt("New task for "+room.name+":");if(v&&v.trim()){room.tasks.push({t:v.trim(),p:"week",deadline:""});save();render();}};
     sec.appendChild(add);
+    const nameEl=sec.querySelector(".cat-name");
+    if(nameEl){nameEl.onclick=(ev)=>{ev.stopPropagation();if(nameEl.classList.contains("editing"))return;const orig=room.name;nameEl.contentEditable="true";nameEl.classList.add("editing");nameEl.focus();const rg=document.createRange();rg.selectNodeContents(nameEl);const se=getSelection();se.removeAllRanges();se.addRange(rg);const fin=(ok)=>{nameEl.contentEditable="false";nameEl.classList.remove("editing");const nv=nameEl.textContent.trim();if(ok&&nv&&nv!==orig){room.name=nv;save();render();}else{nameEl.textContent=orig;}};nameEl.onkeydown=(e)=>{if(e.key==="Enter"){e.preventDefault();fin(true);}else if(e.key==="Escape"){fin(false);}};nameEl.onblur=()=>fin(true);};}
+    const delBtn=sec.querySelector(".catdel");
+    if(delBtn){delBtn.onclick=()=>{if(state.rooms.length<=1){toast("Keep at least one category");return;}if(confirm("Delete category \""+room.name+"\" and its tasks?")){state.rooms=state.rooms.filter(r=>r.id!==room.id);save();render();toast("Category removed");}};}
+    ul.ondragover=(e)=>{if(Array.from(e.dataTransfer.types).includes("application/x-task")){e.preventDefault();e.dataTransfer.dropEffect="move";ul.classList.add("drop-over");}};
+    ul.ondragleave=()=>ul.classList.remove("drop-over");
+    ul.ondrop=(e)=>{ul.classList.remove("drop-over");const raw=e.dataTransfer.getData("application/x-task");if(!raw)return;e.preventDefault();let d;try{d=JSON.parse(raw);}catch(_){return;}const from=state.rooms.find(r=>r.id===d.room);if(!from)return;if(from.id===room.id)return;const moved=from.tasks[d.i];if(!moved)return;from.tasks.splice(d.i,1);room.tasks.push(moved);save();render();toast("Moved to "+room.name);};
     sec.querySelector('[data-toggle="hide"]').onclick=()=>{state.hideDone=!state.hideDone;save();render();};
     wrap.appendChild(sec);});
+  const nc=document.createElement("button");nc.className="newcat";nc.textContent="+ new category";
+  nc.onclick=()=>openNewCategory();
+  wrap.appendChild(nc);
+}
+function lighten(hex,amt){hex=hex.replace("#","");if(hex.length===3)hex=hex.split("").map(c=>c+c).join("");const n=parseInt(hex,16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;r=Math.round(r+(255-r)*amt);g=Math.round(g+(255-g)*amt);b=Math.round(b+(255-b)*amt);return "#"+[r,g,b].map(v=>v.toString(16).padStart(2,"0")).join("");}
+function openNewCategory(){
+  const name=prompt("Name of the new category:");
+  if(!name||!name.trim())return;
+  const ov=document.createElement("div");
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:9999";
+  const box=document.createElement("div");
+  box.style.cssText="background:#fff;border-radius:16px;padding:22px;width:260px;max-width:88vw;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);font-family:inherit";
+  box.innerHTML='<div style="font-weight:800;margin-bottom:4px">Pick a colour</div><div style="font-size:12px;color:#888;margin-bottom:14px">for \"'+name.trim().replace(/</g,"&lt;")+'\"</div><input type="color" id="ncColor" value="#3E8E7E" style="width:70px;height:70px;border:none;background:none;cursor:pointer"><div style="display:flex;gap:8px;margin-top:18px"><button id="ncCancel" style="flex:1;padding:9px;border-radius:9px;border:1px solid #ddd;background:#fff;cursor:pointer;font-family:inherit;font-weight:700">Cancel</button><button id="ncOk" style="flex:1;padding:9px;border-radius:9px;border:none;background:#3E8E7E;color:#fff;cursor:pointer;font-family:inherit;font-weight:700">Create</button></div>';
+  ov.appendChild(box);document.body.appendChild(ov);
+  const close=()=>ov.remove();
+  ov.onclick=(e)=>{if(e.target===ov)close();};
+  box.querySelector("#ncCancel").onclick=close;
+  box.querySelector("#ncOk").onclick=()=>{
+    const dot=box.querySelector("#ncColor").value;
+    const id="cat"+Date.now().toString(36);
+    state.rooms.push({id,name:name.trim(),wall:lighten(dot,.82),dot,furn:["✨","🌿","⭐","🍃","🌸","🔆","🌼","💫"],tasks:[]});
+    close();save();render();toast("Category created 🎨");
+    const el=document.getElementById("cat-"+id);if(el)el.scrollIntoView({behavior:"smooth"});
+  };
 }
 function renderNextView(wrap){
   const items=[];state.rooms.forEach(room=>room.tasks.forEach(tk=>{if(!tk.d)items.push({room,tk});}));
