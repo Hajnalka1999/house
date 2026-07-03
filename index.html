@@ -396,6 +396,7 @@ function normalize(){
   if(!state.streak)state.streak={n:0,last:""};
   if(!state.lastLevel)state.lastLevel=1;
   if(!state.why)state.why=seedState().why;
+  if(typeof state.rev!=="number")state.rev=0;
   if(!Array.isArray(state.bricksDef)||state.bricksDef.length!==4)state.bricksDef=defaultBricks();
   state.bricksDef.forEach(b=>{if(!b.icon)b.icon="🧱";if(!b.label)b.label="Brick";if(!b.color)b.color="#B5613E";});
   if(state.onboarded===undefined)state.onboarded=true;
@@ -427,12 +428,22 @@ function load(){
     }
   }
   if(!state)state=seedState();
-  normalize();rollover();backup();save();
+  normalize();rollover();backup();saveQuiet();
 }
+/* save(): every real user edit bumps `rev`. Sync conflicts are resolved by rev
+   (most edits wins), NOT by wall clock — so a stale device that merely loads or
+   rolls over at midnight can never overwrite hours of newer work. */
 function save(skipCloud){
+  state.rev=(state.rev||0)+1;
   state.updatedAt=Date.now();
   try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
   if(!skipCloud&&window.cloudPush)window.cloudPush();
+}
+/* housekeeping persist (page load, midnight rollover): syncs but claims no new edits */
+function saveQuiet(){
+  state.updatedAt=Date.now();
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+  if(window.cloudPush)window.cloudPush();
 }
 /* remote state arriving from another device / after sign-in */
 function applyRemote(remote,remoteUpdatedAt){
@@ -953,9 +964,19 @@ function blueprintModal(){
     state.rooms.push({id:uid(),name:"New room",wall:p[0],dot:p[1],floor:1,dependsOn:null,theme:"cozy",style:0});
     save();renderAll();blueprintModal();};
 }
+function backupLabel(json){
+  try{const s=JSON.parse(json);return `${(s.tasks||[]).length} tasks · ${(s.tasks||[]).filter(t=>t.d).length} done · ${(s.rooms||[]).length} rooms`;}
+  catch(e){return"?";}
+}
+function restoreParsed(parsed,label){
+  const curRev=state.rev||0;
+  state=parsed;normalize();rollover();
+  state.rev=Math.max(state.rev||0,curRev)+1; /* restored state must win everywhere */
+  save();renderAll();closeModal();toast("Restored "+label+" ✓ (and synced to the cloud)");
+}
 function helpModal(){
   const backups=Object.keys(localStorage).filter(k=>k.startsWith(BK_PREFIX)).sort().reverse();
-  let bkHtml=backups.length?backups.map(k=>`<button class="mini" data-bk="${k}">restore ${k.slice(BK_PREFIX.length)}</button>`).join(" "):"<i>none yet</i>";
+  let bkHtml=backups.length?backups.map(k=>`<button class="mini" data-bk="${k}">↩ ${k.slice(BK_PREFIX.length)} — ${backupLabel(localStorage.getItem(k))}</button>`).join(" "):"<i>none yet on this device</i>";
   openModal(`<h2>⚙ More <button class="mx">×</button></h2>
   <h3>How the house works</h3>
   <p>🧱 <b>Foundation bricks</b> are your wellbeing — tap them daily; they power your 🔋 energy.
@@ -965,14 +986,30 @@ function helpModal(){
   <h3>Google Calendar → house</h3>
   <p>In Google Calendar: <b>Settings → Import &amp; export → Export</b> (or a single calendar's "Integrate" section) to download an <b>.ics</b> file, then tap <b>📅 Import calendar</b> in the Inbox here and pick that file. Events arrive as Inbox tasks with their date as deadline — you sort them into rooms.</p>
   <h3>Your data</h3>
-  <p>Everything saves in this browser automatically, and the app keeps the last 7 daily backups. Use <b>export</b> (bottom of page) to download a file — do this before big changes or to move between phone ↔ laptop (import it on the other device).</p>
-  <p>Restore a backup: ${bkHtml}</p>
-  <div class="note">Heads-up: browser storage is per-device. True cloud sync (one account, both devices always identical) is the next milestone — the export/import bridge covers the gap.</div>`);
+  <p>Signed in, every change saves to the cloud automatically (watch the ☁ chip by your name). Each device also keeps 7 local daily backups, and your account keeps 14 daily <b>cloud backups</b> that work from any device. <b>export</b> (bottom of page) downloads a file copy any time.</p>
+  <p>Backups on this device: ${bkHtml}</p>
+  <p>Cloud backups (any device): <span id="cloudBkList"><i>${cloud.user?"loading…":"sign in to see them"}</i></span></p>
+  <div class="note">Restoring makes that snapshot your current house on every device — it wins over whatever is in the cloud.</div>`);
   modal.querySelector(".mx").onclick=closeModal;
   modal.querySelectorAll("[data-bk]").forEach(b=>b.onclick=()=>{
-    if(!confirm("Restore backup from "+b.dataset.bk.slice(BK_PREFIX.length)+"? Current state will be replaced."))return;
-    try{state=JSON.parse(localStorage.getItem(b.dataset.bk));normalize();rollover();save();renderAll();closeModal();toast("Backup restored");}catch(e){toast("Could not restore that backup");}
+    if(!confirm("Restore this device's backup from "+b.dataset.bk.slice(BK_PREFIX.length)+"? Your current house will be replaced (on all devices)."))return;
+    try{restoreParsed(JSON.parse(localStorage.getItem(b.dataset.bk)),b.dataset.bk.slice(BK_PREFIX.length));}
+    catch(e){toast("Could not restore that backup");}
   });
+  if(cloud.user&&window.__cloudBackups){
+    window.__cloudBackups.list().then(ids=>{
+      const span=document.getElementById("cloudBkList");if(!span)return;
+      span.innerHTML=ids.length?ids.map(id=>`<button class="mini" data-cbk="${id}">☁↩ ${id}</button>`).join(" "):"<i>first one is created today</i>";
+      span.querySelectorAll("[data-cbk]").forEach(b=>b.onclick=async()=>{
+        if(!confirm("Restore the cloud backup from "+b.dataset.cbk+"? Your current house will be replaced (on all devices)."))return;
+        try{
+          const d=await window.__cloudBackups.get(b.dataset.cbk);
+          if(!d||!d.state){toast("Backup not found");return;}
+          restoreParsed(JSON.parse(d.state),"cloud "+b.dataset.cbk);
+        }catch(e){toast("Could not restore that backup");}
+      });
+    }).catch(()=>{});
+  }
 }
 
 /* ---------- ICS import */
@@ -1059,9 +1096,19 @@ function renderAuth(){
   }
 }
 function setSyncState(s){
-  const el=document.getElementById("syncState");if(!el)return;
-  el.classList.toggle("off",s==="offline");
-  el.textContent=s==="saving"?"☁ saving…":s==="offline"?"⚠ offline — will sync when back":"☁ saved online";
+  const el=document.getElementById("syncState");
+  if(el){
+    el.classList.toggle("off",s==="offline");
+    el.textContent=s==="saving"?"☁ saving…":s==="offline"?"⚠ NOT saved online":"☁ saved online";
+  }
+  /* offline while signed in is serious — show a loud banner, not just a chip */
+  const note=document.getElementById("cloudnote");
+  if(!note||!cloud.user)return;
+  if(s==="offline"){
+    note.innerHTML=`<div class="cloudnote" style="background:#FBE3DD;border-color:#DFA090;color:#8a2f17">⚠️ <span><b>Your changes are NOT reaching the cloud right now.</b> They are safe on this device, but don't switch to another device yet — check your internet and reload this page. This banner disappears when saving works again.</span></div>`;
+  }else{
+    note.innerHTML="";
+  }
 }
 /* first visit (or first sign-in on a brand-new account): ask for the ultimate goal */
 function onboardNewUser(){
@@ -1108,15 +1155,15 @@ load();
 renderAll();
 /* brand-new visitor: ask the goal question before anything else */
 if(!state.onboarded)onboardNewUser();
-/* midnight rollover check while the tab stays open */
-setInterval(()=>{if(state.daily.date!==todayISO()){rollover();save();renderAll();}},60000);
+/* midnight rollover check while the tab stays open (housekeeping — claims no new edits) */
+setInterval(()=>{if(state.daily.date!==todayISO()){rollover();saveQuiet();renderAll();}},60000);
 </script>
 
 <script type="module">
 /* ---------- Firebase cloud backend: Google sign-in + per-user Firestore doc ---------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   /* Public Firebase web config — not a secret. Security comes from Firestore rules,
@@ -1134,22 +1181,64 @@ try {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  let unsub = null, pushTimer = null;
+  let unsub = null, pushTimer = null, pendingPush = false;
 
+  /* "who wins" rule: more edits (rev) wins; equal edits → newer write wins */
+  const isNewer = (aRev, aUpd, bRev, bUpd) =>
+    (aRev || 0) > (bRev || 0) || ((aRev || 0) === (bRev || 0) && (aUpd || 0) > (bUpd || 0));
+
+  async function doPush() {
+    if (!auth.currentUser) return;
+    clearTimeout(pushTimer); pushTimer = null;
+    try {
+      await setDoc(doc(db, "users", auth.currentUser.uid), {
+        state: JSON.stringify(B.state),
+        updatedAt: B.state.updatedAt || Date.now(),
+        rev: B.state.rev || 0,
+        email: auth.currentUser.email || ""
+      });
+      pendingPush = false;
+      B.setSyncState("saved");
+    } catch (e) { B.setSyncState("offline"); }
+  }
   window.cloudPush = () => {
     if (!auth.currentUser) return;
+    pendingPush = true;
     B.setSyncState("saving");
     clearTimeout(pushTimer);
-    pushTimer = setTimeout(async () => {
-      try {
-        await setDoc(doc(db, "users", auth.currentUser.uid), {
-          state: JSON.stringify(B.state),
-          updatedAt: B.state.updatedAt || Date.now(),
-          email: auth.currentUser.email || ""
-        });
-        B.setSyncState("saved");
-      } catch (e) { B.setSyncState("offline"); }
-    }, 900);
+    pushTimer = setTimeout(doPush, 900);
+  };
+  /* never lose the last second of work: flush immediately when the page hides/closes */
+  const flushNow = () => { if (pendingPush) doPush(); };
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushNow(); });
+  addEventListener("pagehide", flushNow);
+
+  /* device-independent daily snapshots in the cloud: users/{uid}/backups/{date}, kept 14 days */
+  async function cloudBackupDaily() {
+    if (!auth.currentUser) return;
+    try {
+      const dateKey = new Date().toISOString().slice(0, 10);
+      const bref = doc(db, "users", auth.currentUser.uid, "backups", dateKey);
+      const ex = await getDoc(bref);
+      if (!ex.exists()) {
+        await setDoc(bref, { state: JSON.stringify(B.state), savedAt: Date.now() });
+        const all = await getDocs(collection(db, "users", auth.currentUser.uid, "backups"));
+        const ids = all.docs.map(x => x.id).sort();
+        while (ids.length > 14) await deleteDoc(doc(db, "users", auth.currentUser.uid, "backups", ids.shift()));
+      }
+    } catch (e) {}
+  }
+  window.__cloudBackups = {
+    list: async () => {
+      if (!auth.currentUser) return [];
+      const all = await getDocs(collection(db, "users", auth.currentUser.uid, "backups"));
+      return all.docs.map(x => x.id).sort().reverse();
+    },
+    get: async id => {
+      if (!auth.currentUser) return null;
+      const s = await getDoc(doc(db, "users", auth.currentUser.uid, "backups", id));
+      return s.exists() ? s.data() : null;
+    }
   };
 
   B.cloud.api = {
@@ -1173,23 +1262,31 @@ try {
       try { snap = await getDoc(ref); } catch (e) {}
       if (snap && snap.exists() && snap.data().state) {
         const d = snap.data();
-        if (!B.state.updatedAt || (d.updatedAt || 0) >= (B.state.updatedAt || 0)) {
-          try { B.applyRemote(JSON.parse(d.state), d.updatedAt); B.toast("☁ Your house is back — right where you left off"); }
-          catch (e) { window.cloudPush(); }
-        } else {
-          window.cloudPush(); // local is newer → push it up
-        }
+        try {
+          const remote = JSON.parse(d.state);
+          const rRev = d.rev !== undefined ? d.rev : (remote.rev || 0);
+          if (isNewer(rRev, d.updatedAt, B.state.rev, B.state.updatedAt)) {
+            B.applyRemote(remote, d.updatedAt);
+            B.toast("☁ Your house is back — right where you left off");
+          } else {
+            window.cloudPush(); // local has more work → it becomes the cloud copy
+          }
+        } catch (e) { window.cloudPush(); }
       } else {
         window.cloudPush();      // brand-new account → seed the cloud with local state
         if (!B.state.onboarded) B.onboardNewUser();  // ask the goal question if they haven't answered yet
       }
+      setTimeout(cloudBackupDaily, 4000); // snapshot today's reconciled state
       /* live sync from other devices */
       unsub = onSnapshot(ref, s => {
         if (!s.exists()) return;
         const d = s.data();
-        if (d.state && d.updatedAt && d.updatedAt > (B.state.updatedAt || 0)) {
-          try { B.applyRemote(JSON.parse(d.state), d.updatedAt); } catch (e) {}
-        }
+        if (!d.state) return;
+        try {
+          const remote = JSON.parse(d.state);
+          const rRev = d.rev !== undefined ? d.rev : (remote.rev || 0);
+          if (isNewer(rRev, d.updatedAt, B.state.rev, B.state.updatedAt)) B.applyRemote(remote, d.updatedAt);
+        } catch (e) {}
       }, () => {});
     }
     B.renderAuth();
