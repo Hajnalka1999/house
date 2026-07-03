@@ -1154,7 +1154,9 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChang
 import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDSYYu__6a_xXezBjviL3IPldl_AWhOCRg",
+  /* Public Firebase web config — not a secret. Security comes from Firestore rules,
+     the authorized-domain list, and this key's HTTP-referrer + API restrictions. */
+  apiKey: "AIzaSyAZdBeObQhNXxaqfc6kDlsmm3QqIJTIOTQ",
   authDomain: "balance-house-bbcf8.firebaseapp.com",
   projectId: "balance-house-bbcf8",
   storageBucket: "balance-house-bbcf8.firebasestorage.app",
