@@ -330,7 +330,9 @@ function palette(room){
     amber:"#F2B441",metal:"#8FA3AD",sky:"#CFE2E8",line:"#E0DACB",muted:"#B9B29F"};
 }
 
-/* ---------- default data (seeded from Brenda's real June plan) */
+/* ---------- default data: a blank generic house.
+   Every visitor starts here and builds their own; personal houses live only in
+   each account's cloud save (and that browser's local storage). */
 function defaultTags(){return [
   {id:"week",label:"THIS WK",color:"#9A3417"},
   {id:"soon",label:"SOON",color:"#8A6310"},
@@ -339,55 +341,22 @@ function defaultTags(){return [
 ];}
 function seedState(){
   const rooms=[
-    {id:"sessions",name:"Sessions",wall:"#E4EFEA",dot:"#3E8E7E",floor:1,dependsOn:null,theme:"wellness",style:0},
-    {id:"admin",name:"Admin & Money",wall:"#F7EFDD",dot:"#D9A53A",floor:1,dependsOn:null,theme:"office",style:0},
-    {id:"marketing",name:"Marketing",wall:"#F6E7E0",dot:"#C77B53",floor:2,dependsOn:"sessions",theme:"studio",style:0},
+    {id:"project",name:"Main project",wall:"#E4EFEA",dot:"#3E8E7E",floor:1,dependsOn:null,theme:"cozy",style:0},
+    {id:"admin",name:"Admin & life",wall:"#F7EFDD",dot:"#D9A53A",floor:1,dependsOn:null,theme:"office",style:0},
+    {id:"creative",name:"Creative",wall:"#F6E7E0",dot:"#C77B53",floor:2,dependsOn:"project",theme:"studio",style:0},
     {id:"learning",name:"Learning",wall:"#ECE7F6",dot:"#7C74C9",floor:2,dependsOn:null,theme:"library",style:0},
   ];
-  const T=(t,room,p,deadline)=>({id:uid(),t,tagId:p,deadline:deadline||"",d:false,roomIds:[room]});
-  const tasks=[
-    T("Design morning river yoga","sessions","week","2026-06-19"),
-    T("Design hike & sunset yoga","sessions","week","2026-06-19"),
-    T("Design shake-out yoga","sessions","week","2026-06-19"),
-    T("Design morning reset (beach)","sessions","week","2026-06-19"),
-    T("Design overnight hike + yoga","sessions","week","2026-06-19"),
-    T("Design staff mobility session (organisers)","sessions","week","2026-06-19"),
-    T("Visit beach/fireplace session location","sessions","week","2026-06-18"),
-    T("Send Veko session info for their website","sessions","week","2026-06-18"),
-    T("Define session offerings & pricing","sessions","soon",""),
-    T("Set date for 1st paid Voss session — announce","sessions","soon",""),
-    T("Pitch Voss resort gondola collab","sessions","later",""),
-    T("Post 2: what I'm building / who it's for","marketing","week","2026-06-14"),
-    T("Finalise sticker design for print","marketing","week","2026-06-13"),
-    T("Finalise business card + QR","marketing","week","2026-06-13"),
-    T("Post 3: 'We start tomorrow'","marketing","soon","2026-06-19"),
-    T("Website updates: one-stop + email/DM signup","marketing","soon",""),
-    T("Post daily during Veko (Jun 20–28)","marketing","ongoing",""),
-    T("Reshare DNT Fjellyoga event","marketing","later",""),
-    T("Prep Spanish tour-guiding training (Jun 16)","learning","week","2026-06-16"),
-    T("Prep for Spanish final exam (Jun 22)","learning","week","2026-06-22"),
-    T("Prep Spanish lessons (Jun 15 & 18)","learning","week","2026-06-15"),
-    T("Skim Content-to-Cash webinar for usable bits","learning","ongoing",""),
-    T("Explore outdoor-ed platforms (research)","learning","later",""),
-    T("Pick up pop-up banner (Jun 15)","admin","week","2026-06-15"),
-    T("View 3 cars / buy one (Jun 15)","admin","week","2026-06-15"),
-    T("Print stickers/cards — test batch","admin","week","2026-06-14"),
-    T("Buy a tripod","admin","week",""),
-    T("Pay electricity bill by Jun 20","admin","soon","2026-06-20"),
-    T("Back up phone photos","admin","later",""),
-    T("Storage unit → rent from October","admin","later",""),
-  ];
   return {v:7,
-    why:{e:"THE WHY",h:"Location-independent outdoor educator",t:"— balance it out —"},
-    tags:defaultTags(),rooms,tasks,
+    why:{e:"THE WHY",h:"Name your ultimate goal",t:"— balance it out —"},
+    tags:defaultTags(),rooms,tasks:[],
     bricksDef:defaultBricks(),
     daily:{date:todayISO(),bricks:[false,false,false,false],three:[{taskId:null,text:"",d:false},{taskId:null,text:"",d:false},{taskId:null,text:"",d:false}]},
-    streak:{n:0,last:""},lastLevel:1,view:"rooms",hideDone:false,onboarded:true};
+    streak:{n:0,last:""},lastLevel:1,view:"rooms",hideDone:false,onboarded:false};
 }
 function defaultBricks(){return [
   {icon:"😴",label:"Slept",color:"#B5613E"},
   {icon:"🥗",label:"Ate well",color:"#B5613E"},
-  {icon:"🏃",label:"Moved + physio",color:"#B5613E"},
+  {icon:"🏃",label:"Moved",color:"#B5613E"},
   {icon:"🫂",label:"Connected",color:"#B5613E"},
 ];}
 
@@ -471,6 +440,8 @@ function applyRemote(remote,remoteUpdatedAt){
   state.updatedAt=remoteUpdatedAt||Date.now();
   try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
   renderAll();
+  /* their real house just loaded — retire the welcome question if it's showing */
+  if(state.onboarded&&document.getElementById("goalInput"))closeModal();
 }
 
 /* ---------- helpers */
@@ -1092,36 +1063,28 @@ function setSyncState(s){
   el.classList.toggle("off",s==="offline");
   el.textContent=s==="saving"?"☁ saving…":s==="offline"?"⚠ offline — will sync when back":"☁ saved online";
 }
-/* first sign-in on a brand-new account: ask for the ultimate goal */
+/* first visit (or first sign-in on a brand-new account): ask for the ultimate goal */
 function onboardNewUser(){
   openModal(`<div class="onbox">
     <h2 style="justify-content:center">🏡 Welcome to Balance House</h2>
     <p class="msub">One question before you start building.</p>
     <p style="font-size:15px;font-weight:800;color:var(--pine);margin-top:14px">What is your ultimate goal — the big project you're working on?</p>
-    <input id="goalInput" type="text" maxlength="60" placeholder="e.g. Launch my own outdoor school">
-    <p class="msub">Your answer becomes the roof of your house. Everything you build below holds it up.</p>
-    <button class="go" id="goalKeep">Raise the roof 🏠</button>
-    <p style="margin-top:12px;font-size:12px;color:var(--muted)">…or <button class="signout" id="goalFresh">start with an empty house</button> instead of the example tasks</p>
+    <input id="goalInput" type="text" maxlength="60" placeholder="e.g. Launch my own business">
+    <p class="msub">Your answer becomes the roof of your house. Everything you build below holds it up.
+    Then rename the starter rooms (📐 Blueprint), add your tasks, and lay your first foundation brick.</p>
+    <button class="go" id="goalGo">Raise the roof 🏠</button>
+    <p style="margin-top:12px;font-size:12px;color:var(--muted)">Already built a house? <button class="signout" id="goalSignin">Sign in with Google</button> and it comes right back.</p>
   </div>`);
-  const commit=fresh=>{
+  document.getElementById("goalSignin").onclick=()=>{if(cloud.api)cloud.api.signIn();};
+  const commit=()=>{
     const v2=(document.getElementById("goalInput").value||"").trim();
     if(v2)state.why.h=v2;
     state.onboarded=true;
-    if(fresh){
-      state.rooms=[
-        {id:"project",name:"Main project",wall:"#E4EFEA",dot:"#3E8E7E",floor:1,dependsOn:null,theme:"cozy",style:0},
-        {id:"admin",name:"Admin & life",wall:"#F7EFDD",dot:"#D9A53A",floor:1,dependsOn:null,theme:"office",style:0},
-        {id:"creative",name:"Creative",wall:"#F6E7E0",dot:"#C77B53",floor:2,dependsOn:"project",theme:"studio",style:0},
-        {id:"learning",name:"Learning",wall:"#ECE7F6",dot:"#7C74C9",floor:2,dependsOn:null,theme:"library",style:0},
-      ];
-      state.tasks=[];
-      state.daily.three=[{taskId:null,text:"",d:false},{taskId:null,text:"",d:false},{taskId:null,text:"",d:false}];
-    }
     save();renderAll();closeModal();
-    toast("Welcome home 🏡 finish a task to place your first furniture");confetti();
+    toast("Welcome home 🏡 add a task, finish it, and your first furniture appears");confetti();
   };
-  document.getElementById("goalKeep").onclick=()=>commit(false);
-  document.getElementById("goalFresh").onclick=()=>commit(true);
+  document.getElementById("goalGo").onclick=commit;
+  document.getElementById("goalInput").onkeydown=e=>{if(e.key==="Enter")commit();};
 }
 window.__bh={get state(){return state;},set state(s){state=s;},normalize,rollover,renderAll,renderAuth,setSyncState,onboardNewUser,applyRemote,cloud,toast};
 
@@ -1143,6 +1106,8 @@ document.getElementById("suggest").onclick=()=>{
 
 load();
 renderAll();
+/* brand-new visitor: ask the goal question before anything else */
+if(!state.onboarded)onboardNewUser();
 /* midnight rollover check while the tab stays open */
 setInterval(()=>{if(state.daily.date!==todayISO()){rollover();save();renderAll();}},60000);
 </script>
@@ -1216,7 +1181,7 @@ try {
         }
       } else {
         window.cloudPush();      // brand-new account → seed the cloud with local state
-        B.onboardNewUser();      // and ask for their ultimate goal
+        if (!B.state.onboarded) B.onboardNewUser();  // ask the goal question if they haven't answered yet
       }
       /* live sync from other devices */
       unsub = onSnapshot(ref, s => {
