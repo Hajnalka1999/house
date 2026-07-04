@@ -1133,7 +1133,18 @@ function onboardNewUser(){
   document.getElementById("goalGo").onclick=commit;
   document.getElementById("goalInput").onkeydown=e=>{if(e.key==="Enter")commit();};
 }
-window.__bh={get state(){return state;},set state(s){state=s;},normalize,rollover,renderAll,renderAuth,setSyncState,onboardNewUser,applyRemote,cloud,toast};
+/* privacy: wipe this device's copy (house + local backups) and show the demo house.
+   Used on sign-out — the signed-in house lives safely in the account's cloud save. */
+function localWipe(){
+  try{
+    Object.keys(localStorage).filter(k=>k===KEY||k.startsWith(BK_PREFIX)).forEach(k=>localStorage.removeItem(k));
+  }catch(e){}
+  state=seedState();normalize();rollover();
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+  renderAll();
+  if(!state.onboarded)onboardNewUser();
+}
+window.__bh={get state(){return state;},set state(s){state=s;},normalize,rollover,renderAll,renderAuth,setSyncState,onboardNewUser,applyRemote,cloud,toast,localWipe};
 
 /* ---------- top-level wiring */
 document.getElementById("editBricks").onclick=brickModal;
@@ -1247,9 +1258,12 @@ try {
       catch (e) { if (e && e.code !== "auth/popup-closed-by-user") B.toast("Sign-in didn't complete — try again"); }
     },
     signOut: async () => {
+      if (!confirm("Sign out? This device switches to the demo house — your own house stays safe in your account and comes back when you sign in.")) return;
       if (unsub) { unsub(); unsub = null; }
+      clearTimeout(pushTimer); pendingPush = false;
       await signOut(auth);
-      B.toast("Signed out — this device keeps a local copy");
+      B.localWipe(); // privacy: no personal house left on a signed-out device
+      B.toast("Signed out — this device now shows the demo house");
     }
   };
 
