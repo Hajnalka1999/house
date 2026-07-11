@@ -4,107 +4,139 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Balance House</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
 <style>
-  :root{--snow:#F7F4ED;--paper:#FBF9F3;--ink:#243B33;--muted:#73837B;--pine:#1F4D3F;--pine2:#2C6650;--line:#E0DACB;
-    --brick:#B5613E;--brick2:#8A4326;--grout:#E9DFCF;--amber:#F2B441;--glow:#FFE7A6;--wood:#C9A36B;--wood-dark:#A9824E;--sky:#CFE2E8;}
+  :root{--cream:#FCF5ED;--card:#FFFDF8;--ink:#1B2E4D;--navy:#1B2E4D;--green:#243A22;--red:#C5181C;--muted:#7C8698;
+    --line:#EADFCE;--sand:#F5EDDD;--amber:#F2B441;--glow:#FFE7A6;--grout:#E9DFCF;
+    --brick:#B5613E;--brick2:#8A4326;--wood:#C9A36B;--wood-dark:#A9824E;--sky:#CFE2E8;}
   *{box-sizing:border-box}html,body{margin:0;padding:0}
-  body{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;color:var(--ink);
-    background:radial-gradient(120% 50% at 50% 0%,#DCEBF0 0%,#CFE2E8 26%,var(--snow) 55%);padding:14px;min-height:100vh}
-  .wrap{max-width:1180px;margin:0 auto}
-  .layout{display:grid;grid-template-columns:1fr;gap:14px}
+  body{font-family:"Nunito Sans","Segoe UI",system-ui,sans-serif;color:var(--ink);
+    background:linear-gradient(180deg,#D9E6EC 0%,#FCF5ED 30%) fixed;padding:14px;min-height:100vh}
+  body.dusk{background:linear-gradient(180deg,#2A3B58 0%,#EFE6DA 42%) fixed}
+  h1,h2,h3,h4,.bfont{font-family:"Baloo 2","Nunito Sans",sans-serif}
+  ::placeholder{color:#A9A69B}
+  input,textarea,select,button{font-family:"Nunito Sans",sans-serif}
+  .wrap{max-width:1250px;margin:0 auto}
+  .layout{display:grid;grid-template-columns:1fr;gap:16px}
   @media(min-width:1000px){
     .layout{grid-template-columns:440px minmax(0,1fr);align-items:start}
     .leftcol{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow-y:auto;scrollbar-width:thin;padding-right:2px}
   }
 
   /* HUD */
-  .hud{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:12px;flex-wrap:wrap}
-  .hud .stat{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--pine)}
-  .bat{width:74px;height:14px;border:2px solid var(--pine);border-radius:4px;position:relative;padding:1px}
-  .bat::after{content:"";position:absolute;right:-5px;top:3px;width:3px;height:6px;background:var(--pine);border-radius:0 2px 2px 0}
-  .bat>span{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#69b08f,var(--amber));transition:width .4s}
-  .bat.low>span{background:#E07a5f}
-  .xp{background:var(--pine);color:#fff;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:800;white-space:nowrap}
-  .built{font-size:13px;color:var(--muted);font-weight:700}
+  .hud{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:9px 16px;margin-bottom:12px;flex-wrap:wrap;box-shadow:0 2px 10px rgba(27,46,77,.06)}
+  .logo{height:46px;width:46px;object-fit:cover;border-radius:11px;flex:none}
+  .titleblock{display:flex;flex-direction:column;gap:0;min-width:120px}
+  .tb1{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:18px;line-height:1.15;color:var(--navy)}
+  .tb2{font-size:10.5px;color:var(--muted);font-style:italic}
+  .hspace{flex:1}
+  .hud .stat{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--navy)}
+  .elabel{font-size:10px;font-weight:800;letter-spacing:1px;color:#5F6C82}
+  .bat{width:70px;height:15px;border:2px solid var(--navy);border-radius:4px;position:relative;padding:2px}
+  .bat::after{content:"";position:absolute;right:-6px;top:3px;width:4px;height:7px;background:var(--navy);border-radius:0 2px 2px 0}
+  .bat>span{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#69B08F,var(--amber));transition:width .4s}
+  .bat.low>span{background:#E07A5F}
+  .built{font-size:13px;color:#5F6C82;font-weight:700}
+  .built b{color:var(--green);font-weight:800}
   .streak{font-size:13px;font-weight:800;color:#B26A00}
+  .lvlwrap{display:flex;flex-direction:column;gap:3px;min-width:126px}
+  .lvlrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .lvlpill{background:var(--navy);color:var(--cream);border-radius:20px;padding:2px 12px;font-size:12px;font-weight:800;font-family:"Baloo 2",sans-serif;white-space:nowrap}
+  .xptext{font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap}
+  .lvlbar{height:5px;border-radius:4px;background:#EDE4D3;overflow:hidden}
+  .lvlbar>span{display:block;height:100%;border-radius:4px;background:var(--red);transition:width .4s}
+  .hudbtn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:7px 12px;font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;white-space:nowrap}
+  .hudbtn:hover{border-color:#cfc0a6}
+  .qbtn{width:34px;text-align:center;padding:7px 0;font-weight:800}
+
+  /* banner */
+  .banner{display:flex;align-items:center;gap:10px;background:#FBEAE3;border:1px solid #EFC9BC;border-radius:12px;padding:9px 16px;margin-bottom:12px;font-size:13px;font-weight:600;color:#8A3A28}
+  .banner .bx{background:none;border:none;color:#B98A7B;cursor:pointer;font-size:15px;margin-left:auto;flex:none}
 
   /* HOUSE */
-  .house{filter:drop-shadow(0 10px 22px rgba(31,77,63,.18))}
+  .house{filter:drop-shadow(0 12px 26px rgba(27,46,77,.16))}
   .roof{position:relative;height:86px}
   .roof svg{position:absolute;left:50%;top:0;transform:translateX(-50%);width:104%;height:86px}
-  .vision{position:absolute;left:0;right:0;top:22px;text-align:center;color:#fff;cursor:pointer}
-  .vision .e{font-size:10px;letter-spacing:3px;font-weight:800;opacity:.85}
-  .vision .h{font-size:14px;font-weight:800;margin-top:2px;text-shadow:0 1px 2px rgba(0,0,0,.3)}
-  .vision .t{font-size:11px;font-style:italic;opacity:.9}
-  .floors{background:var(--pine);border-left:7px solid var(--pine);border-right:7px solid var(--pine);padding:0 4px}
+  .vision{position:absolute;left:0;right:0;top:26px;text-align:center;color:var(--cream);cursor:pointer}
+  .vision .e{font-size:9px;letter-spacing:3px;font-weight:800;opacity:.8}
+  .vision .h{font-family:"Baloo 2",sans-serif;font-size:14.5px;font-weight:700;margin-top:1px;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+  .vision .t{font-size:10.5px;font-style:italic;opacity:.9}
+  #garland{position:absolute;left:56px;top:44px;font-size:17px;display:none}
+  .floors{background:var(--green);border-left:7px solid var(--green);border-right:7px solid var(--green);padding:0 4px}
   .floorrow{display:grid;gap:4px;padding:4px 0 0}
-  .floortag{color:#9FC4B4;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:5px 2px 1px;display:flex;align-items:center;gap:6px}
-  .floortag::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.18)}
+  .floortag{color:#9FC4A9;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:5px 2px 1px;display:flex;align-items:center;gap:6px}
+  .floortag::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.16)}
   .hroom{position:relative;border-radius:3px;overflow:hidden;cursor:pointer;background:#e9eadf}
   .hroom svg{display:block;width:100%;height:auto}
-  .hroom .rlabel{position:absolute;top:5px;left:7px;right:44px;font-size:10.5px;font-weight:800;color:var(--ink);z-index:4;text-shadow:0 1px 0 rgba(255,255,255,.6);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hroom .rcnt{position:absolute;top:5px;right:7px;font-size:9px;font-weight:800;color:var(--muted);z-index:4;pointer-events:none}
-  .hroom .paint{position:absolute;bottom:5px;right:5px;z-index:5;background:rgba(255,255,255,.75);border:none;border-radius:6px;font-size:11px;padding:2px 5px;cursor:pointer;opacity:0;transition:.2s}
+  .hroom .rlabel{position:absolute;top:5px;left:7px;right:44px;font-size:10.5px;font-weight:800;color:var(--navy);z-index:4;text-shadow:0 1px 0 rgba(255,255,255,.6);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hroom .rcnt{position:absolute;top:5px;right:7px;font-size:9px;font-weight:800;color:#77808f;z-index:4;pointer-events:none}
+  .hroom .paint{position:absolute;bottom:5px;right:5px;z-index:5;background:rgba(255,255,255,.8);border:none;border-radius:6px;font-size:11px;padding:2px 5px;cursor:pointer;opacity:0;transition:.2s}
   .hroom:hover .paint{opacity:1}
-  .hroom .deptag{position:absolute;top:19px;left:7px;font-size:8.5px;font-weight:700;color:#8a6310;background:rgba(255,231,166,.9);border-radius:6px;padding:1px 6px;z-index:4;pointer-events:none}
+  .hroom .deptag{position:absolute;top:19px;left:7px;font-size:8.5px;font-weight:700;color:#8a6310;background:rgba(255,231,166,.92);border-radius:6px;padding:1px 6px;z-index:4;pointer-events:none}
   .fitem{transform-box:fill-box;transform-origin:center bottom}
   .fitem.new{animation:fdrop .6s cubic-bezier(.2,1.5,.4,1)}
   @keyframes fdrop{0%{transform:translateY(-46px) scale(.5);opacity:0}70%{transform:translateY(3px) scale(1.05)}100%{transform:none;opacity:1}}
-  .base{background:var(--pine);border-left:7px solid var(--pine);border-right:7px solid var(--pine);border-bottom:7px solid var(--pine);border-radius:0 0 6px 6px;padding:8px 6px 10px}
-  .baselabel{color:var(--glow);font-size:10px;letter-spacing:2px;font-weight:800;text-align:center;margin-bottom:6px;text-transform:uppercase}
+  .base{background:var(--green);border-left:7px solid var(--green);border-right:7px solid var(--green);border-bottom:7px solid var(--green);border-radius:0 0 6px 6px;padding:8px 6px 10px;position:relative}
+  .baselabel{color:#F2D9A0;font-size:10px;letter-spacing:2px;font-weight:800;text-align:center;margin-bottom:6px;text-transform:uppercase}
   .bricks{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
   .brickbtn{position:relative;min-height:50px;border-radius:4px;background:var(--grout);border:2px dashed #cdbfa6;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:#a99a7e;font-size:10px;font-weight:700;gap:2px;user-select:none;transition:.15s;overflow:hidden;text-align:center;line-height:1.15;padding:4px 2px}
   .brickbtn .bi{font-size:16px;filter:grayscale(1) opacity(.55)}
   .brickbtn.set{background:repeating-linear-gradient(0deg,#A9542F 0 10px,#C06A45 10px 22px);border:2px solid var(--brick2);color:#fff;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2);text-shadow:0 1px 2px rgba(0,0,0,.4)}
   .brickbtn.set .bi{filter:none}
+  .editbricks{position:absolute;right:8px;top:6px;background:none;border:none;color:var(--glow);opacity:.7;cursor:pointer;font-size:12px;padding:2px}
+  .editbricks:hover{opacity:1}
   .ground{margin:0 -6px}
   .ground svg{display:block;width:100%;height:auto}
 
   /* TODAY */
-  .today{background:var(--pine);color:#fff;border-radius:14px;padding:15px 16px;margin:14px 0}
+  .today{background:var(--navy);color:#FCF5ED;border-radius:14px;padding:15px 16px;margin:14px 0}
   .today .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .today h3{margin:0;font-size:15px}
-  .sg{background:var(--glow);color:var(--pine);border:none;border-radius:18px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
-  .today p{margin:3px 0 12px;font-size:12px;color:#BFD8CE}
+  .today h3{margin:0;font-size:15px;font-weight:700}
+  .today .dayname{font-size:11px;color:#9FB0CC;font-weight:700}
+  .sg{background:var(--glow);color:var(--navy);border:none;border-radius:18px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+  .today p{margin:3px 0 12px;font-size:12px;color:#9FB0CC}
   .slot{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.09);border:1.5px dashed transparent;border-radius:10px;padding:9px 10px;margin-bottom:8px;transition:.15s}
   .slot.over{border-color:var(--glow);background:rgba(255,231,166,.18)}
-  .slot .pin{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--glow);min-width:40px}
-  .slot input[type=text]{flex:1;background:none;border:none;color:#fff;font-size:14px;font-family:inherit;outline:none;min-width:0}
-  .slot input[type=text]::placeholder{color:#8FB0A4}
-  .slot input.done{text-decoration:line-through;color:#8FB0A4}
+  .slot .pin{font-size:10px;font-weight:800;letter-spacing:1px;color:#F2D9A0;min-width:40px}
+  .slot input[type=text]{flex:1;background:none;border:none;color:#FCF5ED;font-size:14px;font-family:inherit;outline:none;min-width:0}
+  .slot input[type=text]::placeholder{color:#8FA0C0}
+  .slot input.done{text-decoration:line-through;color:#8FA0C0}
   .tkl{min-width:18px;height:18px;border:2px solid var(--glow);border-radius:5px;appearance:none;-webkit-appearance:none;cursor:pointer;position:relative;flex:none}
   .tkl:checked{background:var(--glow)}
-  .tkl:checked::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--pine);border-width:0 2px 2px 0;transform:rotate(45deg)}
-  .clr{background:none;border:none;color:#8FB0A4;cursor:pointer;font-size:16px;flex:none}
+  .tkl:checked::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--navy);border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .clr{background:none;border:none;color:#8FA0C0;cursor:pointer;font-size:16px;flex:none}
 
   /* RIGHT COLUMN */
   .colhead{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-  .vtog{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px;flex:1;min-width:220px}
-  .vtog button{flex:1;border:none;background:none;font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);padding:8px;border-radius:9px;cursor:pointer;white-space:nowrap}
-  .vtog button.on{background:var(--pine);color:#fff}
-  .tool{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:12px;font-weight:700;color:var(--pine);cursor:pointer;font-family:inherit;white-space:nowrap}
-  .tool:hover{border-color:var(--pine2)}
+  .vtog{display:flex;gap:3px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;flex-wrap:wrap}
+  .vtog button{border:none;background:none;font-family:"Baloo 2",sans-serif;font-size:12.5px;font-weight:800;color:var(--muted);padding:8px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+  .vtog button.on{background:var(--navy);color:var(--cream)}
+  .tool{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:12px;font-weight:700;color:var(--green);cursor:pointer;font-family:inherit;white-space:nowrap}
+  .tool:hover{border-color:#cfc0a6}
 
-  .cat{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 15px;margin-bottom:12px}
-  .cat-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px}
-  .cat h3{margin:0;font-size:15px;color:var(--pine);display:flex;align-items:center;gap:8px;min-width:0}
+  .cat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 16px;margin-bottom:12px}
+  .cat-header{display:flex;align-items:center;gap:8px;margin-bottom:2px;flex-wrap:wrap}
+  .cat h3{margin:0;font-size:15px;color:var(--navy);font-weight:700;display:flex;align-items:center;gap:8px;min-width:0;flex:1}
   .cat .dot{width:11px;height:11px;border-radius:3px;flex:none}
   .cat .cc{font-size:12px;color:var(--muted);font-weight:600}
-  .cat .sub{font-size:11px;color:var(--muted);margin:2px 0 8px}
-  .roombar{height:5px;border-radius:4px;background:var(--grout);overflow:hidden;margin:6px 0 8px}
+  .cat .sub{font-size:11px;color:#A9A196;margin:2px 0 8px}
+  .roombar{height:5px;border-radius:4px;background:#F0E7D6;overflow:hidden;margin:6px 0 8px}
   .roombar>span{display:block;height:100%;border-radius:4px;transition:width .4s}
   .hidebtn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;font-size:11px;font-weight:700;padding:4px 9px;cursor:pointer;font-family:inherit;white-space:nowrap}
-  .hidebtn.on{background:var(--pine);color:#fff;border-color:var(--pine)}
+  .hidebtn.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .sortsel{font-size:11px;border:1px solid var(--line);border-radius:8px;padding:3px 4px;background:#fff;color:#5F6C82;cursor:pointer;font-family:inherit}
 
   ul.tasks{list-style:none;margin:0;padding:0}
   ul.tasks li{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px dashed var(--line);font-size:14px;flex-wrap:wrap}
   ul.tasks li:first-child{border-top:none}
   ul.tasks li[draggable=true]{cursor:grab}
-  .tk{appearance:none;-webkit-appearance:none;min-width:19px;height:19px;border:2px solid var(--pine2);border-radius:6px;cursor:pointer;position:relative;transition:.15s;flex:none}
-  .tk:checked{background:var(--pine2)}
+  .tk{appearance:none;-webkit-appearance:none;min-width:19px;height:19px;border:2px solid var(--green);border-radius:6px;cursor:pointer;position:relative;transition:.15s;flex:none}
+  .tk:checked{background:var(--green)}
   .tk:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
-  .tn{flex:1 1 240px;min-width:0;cursor:text}
-  .tn.editing{background:#fff;border:1px solid var(--pine2);border-radius:6px;padding:4px 8px;outline:none}
+  .tn{flex:1 1 200px;min-width:0;cursor:text;overflow-wrap:anywhere}
+  .tn.editing{background:#fff;border:1px solid var(--navy);border-radius:6px;padding:4px 8px;outline:none}
   .ctl{display:flex;gap:6px;align-items:center;margin-left:auto;flex-wrap:wrap}
   .pri{font-size:9px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:.4px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit}
   .di{font-family:inherit;font-size:11px;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:3px 6px;background:#fff;max-width:118px}
@@ -113,49 +145,162 @@
   li.done .pri{opacity:.4}
   .rdots{display:flex;gap:3px;align-items:center;cursor:pointer;padding:3px}
   .ndot{width:10px;height:10px;border-radius:3px;flex:none}
-  .up{background:var(--pine);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;padding:4px 8px;cursor:pointer;flex:none;font-family:inherit}
-  .up:hover{background:var(--pine2)}
-  .del{background:none;border:none;color:#cfc8b8;cursor:pointer;font-size:17px;line-height:1;padding:0 2px;flex:none}
-  .del:hover{color:var(--brick)}
-  .expander{flex-basis:100%;background:var(--snow);border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px}
+  .up{background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;padding:4px 8px;cursor:pointer;flex:none;font-family:inherit}
+  .up:hover{background:#2c4470}
+  .del{background:none;border:none;color:#D4CCBB;cursor:pointer;font-size:17px;line-height:1;padding:0 2px;flex:none}
+  .del:hover{color:var(--red)}
+  .chev{background:none;border:1px solid var(--line);border-radius:7px;font-size:10px;padding:3px 6px;cursor:pointer;color:#8a7a55;font-weight:800;flex:none}
+  .hasdet{background:var(--sand);border:none;border-radius:7px;font-size:11px;padding:3px 7px;cursor:pointer;color:#8a7a55;font-weight:700;flex:none}
+  .movesb{font-size:10px;color:#B98A7B;font-weight:800;flex:none}
+  .blockedb{font-size:11px;flex:none}
+  .msflag{font-size:12px;flex:none}
+  .udwrap{display:flex;flex-direction:column;flex:none}
+  .udwrap button{background:none;border:none;color:#B9B2A2;cursor:pointer;font-size:10px;line-height:1;padding:1px}
+  .udwrap button:hover{color:var(--navy)}
+  .expander{flex-basis:100%;background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px}
   .expander .exlabel{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
   .chip{border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted)}
   .chip.on{color:#fff}
+  .detbox{flex-basis:100%;background:#FBF6EC;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:4px;display:flex;flex-direction:column;gap:8px}
+  .detlabel{font-size:10px;font-weight:800;letter-spacing:1px;color:#8a7a55;text-transform:uppercase}
+  .detlabel i{font-weight:600;text-transform:none;letter-spacing:0;color:#B9B2A2;font-style:normal}
+  .detbox textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:13px;min-height:52px;resize:vertical;background:#fff;color:var(--ink);outline:none;font-family:inherit}
+  .detbox input[type=text]{border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:12.5px;background:#fff;color:var(--ink);outline:none;font-family:inherit}
+  .detrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px;color:#5F6C82;font-weight:700}
+  .detrow select{font-size:11.5px;border:1px solid var(--line);border-radius:8px;padding:4px;background:#fff;color:var(--ink);max-width:190px;font-family:inherit}
   .addrow{display:flex;gap:6px;margin-top:9px}
-  .addrow input{flex:1;border:1.5px dashed var(--line);border-radius:9px;padding:7px 10px;font-size:13px;font-family:inherit;background:none;color:var(--ink);outline:none;min-width:0}
-  .addrow input:focus{border-color:var(--pine2)}
-  .addrow button{background:var(--pine);border:none;color:#fff;border-radius:9px;padding:0 14px;font-size:16px;cursor:pointer}
+  .addrow input{flex:1;border:1.5px dashed #E0D5C0;border-radius:9px;padding:8px 11px;font-size:13px;font-family:inherit;background:none;color:var(--ink);outline:none;min-width:0}
+  .addrow input:focus{border-color:var(--green)}
+  .addrow button{background:var(--green);border:none;color:#fff;border-radius:9px;padding:0 14px;font-size:16px;cursor:pointer}
   .bucket{margin-bottom:14px}
   .bucket h4{margin:0 0 6px;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:800;display:flex;align-items:center;gap:8px}
   .bucket h4 .pipe{flex:1;height:1px;background:var(--line)}
-  .b-over h4{color:#C0392B}.b-today h4{color:#B26A00}.b-week h4{color:var(--pine)}.b-later h4{color:var(--muted)}.b-none h4{color:var(--muted)}
-  .inbox{background:#FFF9E9;border:1.5px solid #EAD9A8}
+  .b-over h4{color:var(--red)}.b-today h4{color:#B26A00}.b-week h4{color:var(--green)}.b-later h4{color:var(--muted)}.b-none h4{color:var(--muted)}
+  .inbox{background:#FFF9EC;border:1.5px solid #EFDDB4}
   .inbox h3{color:#8A6310}
+  .bphint{font-size:12px;color:#A9A196;margin:4px 2px 0}
+
+  /* CALENDAR */
+  .calhead{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .navbtn{border:1px solid var(--line);background:#fff;border-radius:9px;width:30px;height:30px;cursor:pointer;font-weight:800;color:var(--navy)}
+  .todaybtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 10px;cursor:pointer;font-weight:700;font-size:12px;color:var(--navy);font-family:inherit}
+  .caltitle{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:17px;min-width:150px;text-align:center}
+  .seg{display:flex;gap:3px;background:var(--sand);border-radius:10px;padding:3px}
+  .seg button{border:none;font-size:12px;font-weight:800;padding:5px 12px;border-radius:8px;cursor:pointer;background:none;color:var(--muted);font-family:inherit}
+  .seg button.on{background:var(--navy);color:#fff}
+  .calhint{font-size:11px;color:#A9A196;margin-bottom:8px}
+  .dnames{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+  .dname{text-align:center;font-size:10px;font-weight:800;letter-spacing:1px;color:var(--muted)}
+  .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .calcell{min-height:86px;min-width:0;border-radius:8px;padding:5px 5px 4px;background:#FDFAF3;border:1px solid #F0E7D6}
+  .calcell.wk{min-height:300px}
+  .calcell.out{opacity:.38}
+  .calcell.tdy{background:var(--sand);border:2px solid var(--red)}
+  .calcell.dragover{outline:2px dashed var(--red);outline-offset:-2px}
+  .cnum{font-size:11px;font-weight:800;color:var(--navy);margin-bottom:3px}
+  .calcell.out .cnum{color:#B9B2A2}
+  .calcell.tdy .cnum{color:var(--red)}
+  .chipscol{display:flex;flex-direction:column;gap:3px}
+  .calchip{display:flex;align-items:flex-start;gap:4px;border-radius:6px;padding:2px 5px;font-size:10px;font-weight:700;cursor:grab;min-width:0;background:#fff;color:var(--navy)}
+  .calchip .cdot{width:6px;height:6px;border-radius:2px;flex:none;margin-top:3px}
+  .calchip .ct{min-width:0;overflow-wrap:anywhere;line-height:1.3}
+  .calchip.donechip{background:#EFEAE0;color:#A9A196}.calchip.donechip .ct{text-decoration:line-through}
+  .calchip.evchip{background:#E3E9DC;color:var(--green)}
+  .calchip.remchip{background:#FBF3E2;color:#8A6310}
+
+  /* TIMELINE */
+  .tlhead{display:grid;grid-template-columns:170px 1fr;border-bottom:2px solid var(--line);padding-bottom:4px;margin-bottom:2px}
+  .tldays{display:grid;grid-template-columns:repeat(14,1fr)}
+  .tld{text-align:center;padding:2px 0;border-radius:4px}
+  .tld .w{font-size:8.5px;font-weight:800;letter-spacing:.5px}
+  .tld .n{font-size:10.5px;font-weight:800}
+  .tlrow{display:grid;grid-template-columns:170px 1fr;align-items:center;border-top:1px dashed #F0E7D6;padding:5px 0}
+  .tlname{min-width:0;padding-right:8px}
+  .tlname .nm{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--navy)}
+  .tlname .nm .ndot{width:9px;height:9px}
+  .tlname .nm span:last-child{min-width:0;overflow-wrap:anywhere}
+  .tlafter{font-size:10px;color:#A9A196;padding-left:15px}
+  .tltrack{position:relative;height:24px;border-radius:4px}
+  .tlbar{position:absolute;top:4px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding:0 5px;min-width:10px;overflow:hidden}
+  .tlbar span{font-size:9px;color:#fff;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tldiamond{position:absolute;top:2px;font-size:12px;color:var(--red)}
+  .unschh{margin-top:12px;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#A9A196}
+  .uchip{display:inline-flex;align-items:center;gap:5px;background:var(--sand);border-radius:8px;padding:4px 9px;font-size:11px;font-weight:700;color:#5F6C82;margin:6px 6px 0 0}
+  .uchip .ndot{width:7px;height:7px;border-radius:2px}
+  .tlempty{text-align:center;font-size:12px;color:#B9B2A2;padding:18px}
+
+  /* NOTES */
+  .notesgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
+  @media(min-width:900px){.notesgrid{grid-template-columns:minmax(0,1fr) 240px}}
+  .dumpta{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:14px;min-height:220px;resize:vertical;background:#fff;color:var(--ink);outline:none;line-height:1.6;font-family:inherit}
+  .lnhead{display:flex;align-items:center;gap:8px;margin:14px 0 4px;flex-wrap:wrap}
+  .lnhead .detlabel{flex:1}
+  .lnhead select{font-size:11.5px;border:1px solid var(--line);border-radius:8px;padding:4px;background:#fff;color:var(--ink);font-family:inherit}
+  .lnrow{display:flex;align-items:center;gap:8px;background:#FBF6EC;border:1px solid var(--line);border-radius:9px;padding:6px 10px;margin-top:4px}
+  .lnrow .lt{flex:1;font-size:13px;min-width:0;overflow-wrap:anywhere}
+  .mkbtn{background:var(--green);color:#fff;border:none;border-radius:8px;font-size:10.5px;font-weight:800;padding:5px 9px;cursor:pointer;white-space:nowrap}
+  .helpcard{background:var(--navy);color:var(--cream);border-radius:14px;padding:15px 16px}
+  .helpcard h3{margin:0;font-size:14px;font-weight:700;color:var(--cream)}
+  .helpcard .hp{font-size:12px;color:#9FB0CC;line-height:1.6;margin-top:8px}
+  .helpcard .hq{background:rgba(255,255,255,.08);border-radius:9px;padding:8px 10px;font-size:12px;line-height:1.5;margin-top:8px}
+  .helpcard .hi{font-size:11px;color:#9FB0CC;margin-top:10px;font-style:italic}
 
   .foot{text-align:center;font-size:12px;color:var(--muted);margin:16px 0 6px}
   .foot button{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-family:inherit;font-size:12px;padding:2px 6px}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(18px);background:var(--pine);color:#fff;padding:10px 18px;border-radius:30px;font-size:14px;font-weight:700;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 8px 22px rgba(0,0,0,.22);z-index:80;max-width:88vw;text-align:center}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .toast.big{background:var(--amber);color:var(--pine);font-size:15px}
+
+  /* toasts */
+  #toasts{position:fixed;right:18px;bottom:18px;display:flex;flex-direction:column;gap:8px;z-index:85;max-width:320px;pointer-events:none}
+  .toastn{background:var(--navy);color:var(--cream);border-radius:12px;padding:11px 14px;font-size:13px;font-weight:600;box-shadow:0 8px 22px rgba(27,46,77,.3);animation:toastIn .25s ease}
+  .toastn.big{background:var(--amber);color:var(--navy);font-weight:700}
+  @keyframes toastIn{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
 
   /* modal */
-  .overlay{position:fixed;inset:0;background:rgba(36,59,51,.45);display:none;align-items:flex-start;justify-content:center;z-index:60;padding:20px 12px;overflow-y:auto}
+  .overlay{position:fixed;inset:0;background:rgba(27,46,77,.45);display:none;align-items:flex-start;justify-content:center;z-index:60;padding:20px 12px;overflow-y:auto}
   .overlay.show{display:flex}
-  .modal{background:var(--paper);border-radius:16px;max-width:620px;width:100%;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-  .modal h2{margin:0 0 4px;font-size:17px;color:var(--pine);display:flex;justify-content:space-between;align-items:center}
+  .overlay.center{align-items:center}
+  .modal{background:var(--card);border-radius:18px;max-width:620px;width:100%;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal.pop{max-width:420px;text-align:center;animation:popIn .3s ease;padding:26px 28px}
+  @keyframes popIn{0%{transform:scale(.75);opacity:0}80%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
+  .modal h2{margin:0 0 4px;font-size:18px;color:var(--navy);display:flex;justify-content:space-between;align-items:center;font-weight:700}
   .modal .mx{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted)}
-  .modal .msub{font-size:12px;color:var(--muted);margin:0 0 12px}
+  .modal .msub{font-size:12px;color:#5F6C82;margin:0 0 12px;line-height:1.5}
   .mrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:7px 0;border-top:1px dashed var(--line)}
   .mrow input[type=text]{flex:1;min-width:110px;border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:13px;font-family:inherit;background:#fff}
   .mrow input[type=color]{width:34px;height:30px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:2px;cursor:pointer}
   .mrow select{border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12px;font-family:inherit;background:#fff;max-width:130px}
-  .mrow .mini{background:var(--snow);border:1px solid var(--line);border-radius:7px;font-size:12px;padding:4px 8px;cursor:pointer;font-family:inherit}
+  .mrow .mini{background:var(--cream);border:1px solid var(--line);border-radius:7px;font-size:12px;padding:4px 8px;cursor:pointer;font-family:inherit}
   .mrow .mlabel{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;width:100%}
-  .maddbtn{margin-top:10px;background:none;border:1.5px dashed var(--line);color:var(--muted);border-radius:9px;padding:8px;font-size:13px;cursor:pointer;width:100%;font-family:inherit}
-  .maddbtn:hover{border-color:var(--pine2);color:var(--pine2)}
-  .modal .note{font-size:11.5px;color:var(--muted);background:var(--snow);border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.5}
-  .modal h3{font-size:13px;color:var(--pine);margin:14px 0 4px}
+  .maddbtn{margin-top:10px;background:none;border:1.5px dashed #E0D5C0;color:var(--muted);border-radius:9px;padding:8px;font-size:13px;cursor:pointer;width:100%;font-family:inherit}
+  .maddbtn:hover{border-color:var(--green);color:var(--green)}
+  .modal .note{font-size:11.5px;color:#5F6C82;background:var(--cream);border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.5}
+  .modal h3{font-size:13px;color:var(--green);margin:14px 0 4px;font-weight:800}
   .modal p{font-size:12.5px;line-height:1.55;margin:4px 0}
+  .bigbtn{background:var(--red);color:#fff;border:none;border-radius:12px;padding:10px 26px;font-size:14px;font-weight:800;cursor:pointer;font-family:"Baloo 2",sans-serif}
+  .navybtn{background:var(--navy);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
+  .ghostbtn{background:none;border:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+  .gdots{display:flex;gap:5px;justify-content:center;margin-top:16px}
+  .gdots span{width:8px;height:8px;border-radius:50%}
+  .swatches{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .swatches button{width:40px;height:40px;border-radius:10px;cursor:pointer;border:1px solid #E0D5C0}
+  .swatches button.on{border:3px solid var(--navy)}
+  .optbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .optbtns button{flex:1;border-radius:10px;padding:9px;font-size:13px;font-weight:800;cursor:pointer;background:#fff;color:var(--navy);border:1px solid #E0D5C0;font-family:inherit;white-space:nowrap}
+  .optbtns button.on{background:var(--navy);color:#fff}
+  .optbtns button:disabled{opacity:.45;cursor:not-allowed}
+  .plabel{font-size:12px;color:#5F6C82;margin-top:14px;font-weight:700}
+  .plabel i{color:#A9A196;font-weight:600;font-style:normal}
+  .mailitem{display:flex;align-items:center;gap:9px;border-radius:10px;padding:8px 10px;margin-top:6px}
+  .mailitem.rem{background:#FBF3E2;border:1px solid #F0E2C4}
+  .mailitem.ev{background:#E9EFE4;border:1px solid #D4E0CB}
+  .mailitem .mt{flex:1;font-size:13px;font-weight:600;color:#6B5A33;min-width:0;overflow-wrap:anywhere}
+  .mailitem .mt.done{text-decoration:line-through}
+  .mailitem .mwhen{font-size:11px;color:#B29A62;font-weight:700;white-space:nowrap}
+  .mailitem .del{font-size:15px}
+  .maillist{max-height:230px;overflow-y:auto}
+  .mailform{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+  .mailform input[type=text]{flex:2;min-width:150px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;background:#fff;outline:none;color:var(--ink);font-family:inherit}
+  .mailform input[type=date],.mailform input[type=time]{border:1px solid var(--line);border-radius:10px;padding:7px;font-size:12px;background:#fff;color:var(--ink);font-family:inherit}
+  .mailform .until{font-size:11px;color:var(--muted);font-weight:700}
 
   .confetti{position:fixed;width:9px;height:9px;z-index:90;pointer-events:none;border-radius:2px;animation:cfall 1.1s ease-in forwards}
   @keyframes cfall{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--cx),var(--cy)) rotate(540deg);opacity:0}}
@@ -165,55 +310,63 @@
   .gbtn{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.08)}
   .gbtn:hover{border-color:#b9c4c0}
   .gbtn svg{width:16px;height:16px;flex:none}
-  .avatar{width:30px;height:30px;border-radius:50%;border:2px solid var(--pine);cursor:pointer;object-fit:cover}
-  .synced{font-size:10px;font-weight:800;color:var(--pine2);letter-spacing:.5px}
+  .avatar{width:30px;height:30px;border-radius:50%;border:2px solid var(--navy);cursor:pointer;object-fit:cover}
+  .synced{font-size:10px;font-weight:800;color:#3E7C6E;letter-spacing:.5px}
   .synced.off{color:#B26A00}
-  .userchip{display:flex;align-items:center;gap:7px;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:3px 10px 3px 4px}
+  .userchip{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:3px 10px 3px 4px}
   .signout{background:none;border:none;font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;font-family:inherit;padding:0}
-  .cloudnote{background:#FFF9E9;border:1.5px solid #EAD9A8;border-radius:12px;padding:9px 13px;font-size:12px;color:#8A6310;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .cloudnote{background:#FFF9EC;border:1.5px solid #EFDDB4;border-radius:12px;padding:9px 13px;font-size:12px;color:#8A6310;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .cloudnote b{color:#6b4d0d}
   /* emoji picker */
   .emojigrid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-height:180px;overflow-y:auto;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px;margin-top:6px}
   .emojigrid button{background:none;border:none;font-size:19px;cursor:pointer;padding:3px;border-radius:6px}
-  .emojigrid button:hover{background:var(--snow-2,#EDE8DC)}
+  .emojigrid button:hover{background:var(--sand)}
   .brickedit{border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:8px;background:#fff}
   .brickedit .brow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-  .editbricks{position:absolute;right:8px;top:6px;background:none;border:none;color:var(--glow);opacity:.7;cursor:pointer;font-size:12px;padding:2px}
-  .editbricks:hover{opacity:1}
-  .base{position:relative}
   /* onboarding */
   .onbox{text-align:center;padding:10px 6px}
   .onbox h2{justify-content:center!important}
   .onbox input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;font-size:15px;font-family:inherit;margin:12px 0 4px;text-align:center}
-  .onbox .go{background:var(--pine);color:#fff;border:none;border-radius:20px;padding:10px 26px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:12px}
+  .onbox .go{background:var(--red);color:#fff;border:none;border-radius:20px;padding:10px 26px;font-size:14px;font-weight:800;cursor:pointer;font-family:"Baloo 2",sans-serif;margin-top:12px}
   .hroom.dragover{outline:3px dashed var(--glow);outline-offset:-3px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hud">
-    <div class="stat" title="Energy — comes from your daily foundation bricks">🔋<div class="bat" id="bat"><span id="batf"></span></div></div>
-    <div class="built">House built <span id="pct">0%</span></div>
+    <img class="logo" src="data:image/webp;base64,UklGRkAMAABXRUJQVlA4IDQMAACQNACdASqAAIAAPmEqkEWkIqGVThWsQAYEoA0147vg8ne3u3l1rRpOUH3HfPP0F7aPzE/s5+t3vKek30D/6X/Vesp9BD9dPTr9mf9wP2S9m7ViPCn9V7Sf734S/iHyv9n/KHlC8x/6D0F/jn1u+1/2b9r/617Uf4zwZ96/896gX41/Jf7f+WX5gcfiAD8y/nH+l/rX7vf5Pz+9Q7ur/rfcA/lH85/0P9f/dz1nPAp8I9gD+cf2v/ueyt/I/9//Gf5n9w/ah+df27/sf5P/LfIL/L/6h/vP7l+93+a+cf2X/uF7QX7On6PQqPrpJluNr3I2JdZgaJ8640A1E3eydZIMHc+c61w7wXswlFSivWyXuVKexMS3MuAMAWj/4dgRqu7t4pZL5JLEWj+t6LfEVd8XueRNEeaGY6PiLiLU1x7SQ5YuYy0dAPz+6cNxbDxj+qHp64jZ66JEyRJyDRJh+4w8xt2Qrf/54hzqgeyHpJkmOZugaC+tY6hav6luExXbjr5QTm3oLAhPKKmjQG3QAQDHlEN+SaKgyw/6UttoIE/T1e5V7FTuhPHrpP/oQAAA/v0si8FKRdFDcAAAJLsHitbzqVlM+v3rZpZ+rZouEq9DvftytrM2TuQ3SflySt1aqgZR2Ecz828M8BUo0/pQNlG4DLAvwNDwKyrLexVgCPhxt5tqFXX15GDD+/zxX38HG7jEQmYXLB/h0AG+7N+XrhHuqTOEA/y1gbBqQIHdQ6vtzflp8SDYNxsAzy2sdWWMrmLjJQPXrvUBiLBwAaXXazpr+cK4CaifAFclQ0enb5G1p25RGQ0B3G9B486pnzJ85awWLTG7Zwi3U/x2VDoY0roOKS/v8Yr0sc3A/Gfd9H549mm5zzxlAgsdrT5J1Qj5fKiotm4PNOMmAiz+TRErHBwU9zrFDBsIllkNGdEeyF5v8ovzpomsQwjy2fmlPRciZ6QOGxP6ZxD2xJfSmbkZwE8uhdAGDnQMN3VNpRv73aqTP687Nh6mzY/bi23KxDPMI2tRoE0dDyg1Jap8+cWCQIJmVHNS/X0p9E/rwvNasuKbZbd+FVT/LRweIlWcPdZaYMduM4y/a7YthaZkZR9ZrxsPY42vbL7mIrlUW/PHmMrPOIdI44v+qRvCeLiZoS4gEkt2848Kj9qeDIpMJ3erzBkS1wbEGIwI7X165Ab0/4CtFNCjuTvmbpg9vOoCOqBLS9tt8aUHV57FGk/WqBBhs0oqKbQb9mLXuTxDGscNecoXe1qaayCNZy4vZ0KeGzR1d9ccstdg9u0O6jHBNRMsJ1L5+d1+lQju96nxcER4D24VslLBT8PhudBP/SqqF7E1B318tund2ymrKmpfOMMmXVv84XDatf0du+u51NWfPF4lwDVOg44wilF6HUe2dI/iznweblLN5y78v/yd4zRE9X69TJ9mLz2SlFrvEDpeQCE2jXEmnxf23bcrB/SFP1PtUpTT2NjUUAXj3cBD/DCxdPEgh38ZyqIKSBLgJbVXjLt0NpQO4BPzSYo3ukxWNzs7NxPv4p9J90qAv+QC0RpMkOvo1hdVkkzN/fyiR1fl+GbX8jAG4FeBtkCjmi+XISGhuWIonsZwrq57jJavHo8+tFrgHtqJZWPnISpOgbi0Pvhw72rhTW477ymgafT4R/VWedd324Peb3rR5Sw60/DkiB6YdVwp/sil2LfmiJIT+GCf3V1GZBuC4F5vPjPF/qjrj4emlgBy0Crmyhcu2Wa6nKOfOu7GkjVbWPTrLWsWZ3CR+Wx9t5kGaex6Dd4Oq14ZDVLd+EdRqBGtT2yYwQeKy831kMnm8VuqwPLRX51d1JU1X/u9+zbcDnrEd03TfGi+0CI6hENzCGW7Sh/3hXUtG/HqROVVs3um/jUkgJe73LkPjGxIkg19isJwNHI5W0tKNhn11uPobzECt/wPJn8G0GD/pexOW5b5jyG7dfwjt5V3MrfDB/TvWS1EPPcAns+Neod20PypDACcbzQEXuxGMnblFkYw50OBSdeW1Bf1EISqffwK9iF8VajhXenKxYLqiEVXyvnpETXhbx69o08IW8SrErirP85Qbzsehks3RcfgnXF1UWrWsjhpSBhlAfwv44Of3vPwR4V0nMacMfp9/JVjT4h9QNF/yn/fJHDatp96P1mTzbDUo6lEk+aGoEGT8JBUsd+hDGR/RiYc83Dp9rggMVkLiw1OP5DDGXkqAS/VgI2K2Qwxvz+rgjuO1MqcnN/6OOhSCSCsBoF6Fk0EbBExh6ztozFusiHSyfxeK8ABdWafPsdWGNToqxjHgGD36c03an/0hZgKkLC2KeErvfTWazgXtnwVs+VEo5Oxut6+9mBSw2TQnc/IvDlxNS5DqHacHZbBK0v4Kr7swteVcO1hByJ//FXuPTopsOh8lQS236xTNsOcUOWQIMpzp8D7hi20yYTM0u4GJCGM8ZdEnlusjcX7nLVvKrh7Jmj/O3zFihkHM+K6Yx2gZT9sA34l2vUrqzaGab8/WM2sRp1G9srMJPRFtgkum9VVEz3wf9xg/YNrFej1c1uFAxC9KcTvI0gBL2O6EW1xIoVyu0ASipTwveRfmaUXgxlBT0hME6ajoEG1WwTToQo4isN8iNNUxz8MIYADzaEYooKwhQlbEm6OSaHE6lPGOxPiL3lddtX+KzEiSVZa++AABqayyuCKJpD+7pOpHAB5iPoijuDnNRld1yuFEWhEWOZHwgU6g+clANBqf4CI0wCIV79s5gxnitx5mTKvvHp3pRiDuPEIzXEU1mvCDGlzAXAobJvWaBcefvZATjgfTDc/WrDHrKfugNJh8tU+i7TYAndVzvPrSXm3f15Yn+VIiuiOx/dSrHdRfnNHuM4EnDy3qUpX8nGvnu4aLMpuS++77qGDRMWHrlSIp6kfYBMg/m+XXDSoJRzddtoCm2iE/IQK1uaUfKK2LavMo7F+6cDvnE1UgV1xfSeN2Qu6AIM5QRezSQOlhEK4WxTbmi0deC7oi07ZTsMPN3Bxgqj2gU9aFbuKbhOyKQIuhg5YXqMjXGWvRIhRsWC6XUT3roEtquiow6goYJ8pPU5AIjsS+UESYy3bKuxhyvyoeZf17P3CI997NMX1Pb+7SEi63Fg3TxWQj/y39f/TRJGYkvYA54MprbAWiJHQT+eyH5NzD2P5D0RCoyBrXrpym8L3JwQilYmVqUS5/MNAT3wPkBPkpDpHapAFGlfKmcQ1I5zGRBedGX21zKP96RZ/SfH+A44sezJkT5l0kvjzOW+9KHGuLwNCrQEfH7/xoiY6fCjli757TB731a0KyBSg2Euf/pJLM2m7c3P188W/7BCuqkro4akt01MkzIOmRKr276mPVKEIyBj//Fh/b97kkqmaCVL3su1e6i+znEgjRnQAO4U9CmytNH/MIvnZTsVrHxv/5zkDj+boVmogvkctlRPqDOxz1i+HUk5utzif27h8mwlcXxWyhPDG75F54vZYICVRKxtAibY62w4/Pi7DKDq5sr3/9+Ag3CUwAiSInz9VllfNXzV0d9Nzwwlx4Kpf97teeABBWj6C2VV45Sav+LyLf5aQcz0ZV+saX5WpWFeHAviZz2YSaItDj/Yq2h4p7ey23HlWfuwUrhA5MFGONglXKp+LEwID+htP93/lPjefrweqwbg5c+DbM54y/KNaRH/CempHTlHtR1Kiz+95CTtEih8vbKFIWNqkf83MfNQXC/6xtz6+zFBVjL5YaS4X6AGWkFuoP31mJu15fOqdFOxid3/Zw8sfq4Zt89TwcU9FniP0+SApMAXm3Q5Z+Y3HvEXCc+cceB2IJqwzfGIyWfPhfiia+35BCDcQH2a5wgw9zAYvy++XTvvsl9Mu5btuqHEjJ9uqzNF9HtrOiNtL74Rm4FVE5pYtyhHiN3yRb1zUacCuzKrB0HleE/KieTaJnrV/83e5JMYAGLH4GmevhHFpLObkrQqEHT9FR+rSymKepEyVw2iFvUK3zq+qqnWhfMuq34Knzm1UFtRUp7DH49+mvXWu7N30dlYLe/uLsMqowuqxR9jUTtmCNFtsELnogUlgAzuIWTfY6ivk4spiY1tJvVB90HiOA0jXalSCMY5KvFEBqlI8DgNGF9CQdC8h6lxtrxnqMAE7b0qT07G3fm7Jx0RXzcZd/B5656nt1gB6kAAA" alt="Balance it out">
+    <div class="titleblock"><div class="tb1">Balance House</div><div class="tb2">— balance it out —</div></div>
+    <span class="hspace"></span>
+    <div class="stat" title="Energy — comes from your daily foundation bricks"><span class="elabel">ENERGY</span><div class="bat" id="bat"><span id="batf"></span></div></div>
     <div class="streak" id="streak" title="Days in a row you finished all three">🔥 0</div>
-    <div class="xp" id="xp">XP 0 · Lvl 1</div>
+    <div class="built">House built <b id="pct">0%</b></div>
+    <div class="lvlwrap" title="Tasks, finished rooms and streaks earn XP — levels unlock house customizations">
+      <div class="lvlrow"><span class="lvlpill" id="lvlpill">Lvl 1</span><span class="xptext" id="xptext">0 XP</span></div>
+      <div class="lvlbar"><span id="lvlbarf" style="width:0%"></span></div>
+    </div>
+    <button class="hudbtn" id="btnMail" title="Reminders &amp; events live in the mailbox">📬 <span id="mailN">0</span></button>
+    <button class="hudbtn qbtn" id="btnGuide" title="How it works">?</button>
     <div class="authbar" id="authbar"></div>
   </div>
   <div id="cloudnote"></div>
+  <div id="banner"></div>
 
   <div class="layout">
     <div class="leftcol">
       <div class="house">
         <div class="roof">
           <svg viewBox="0 0 400 86" preserveAspectRatio="none" aria-hidden="true">
-            <polygon points="200,4 396,82 4,82" fill="#1F4D3F"/><polygon points="200,4 396,82 200,82" fill="#2C6650"/>
-            <rect x="304" y="24" width="14" height="30" fill="#173b30"/>
+            <polygon points="200,4 396,82 4,82" fill="#1B2E4D"/>
+            <polygon points="200,4 268,31 132,31" fill="#FCF5ED" opacity="0.9"/>
+            <rect x="304" y="24" width="14" height="30" fill="#16263f"/>
             <g id="smoke" style="display:none">
               <circle cx="311" cy="16" r="5" fill="#fff" opacity=".55"><animate attributeName="cy" values="16;2;-8" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".55;.3;0" dur="3s" repeatCount="indefinite"/></circle>
               <circle cx="316" cy="12" r="4" fill="#fff" opacity=".4"><animate attributeName="cy" values="12;-2;-12" dur="3.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".4;.2;0" dur="3.6s" repeatCount="indefinite"/></circle>
             </g>
-            <g id="rooflag" style="display:none"><rect x="196" y="-6" width="3" height="14" fill="#8A4326"/><polygon points="199,-6 224,-2 199,3" fill="#F2B441"/></g>
+            <g id="rooflag" style="display:none"><rect x="196" y="-6" width="3" height="14" fill="#8A93A5"/><polygon points="199,-6 224,-2 199,3" fill="#C5181C"/></g>
           </svg>
           <div class="vision" id="vision" title="Tap to edit your why"></div>
+          <span id="garland" title="The house is hosting something today">🎊</span>
         </div>
         <div class="floors" id="floors"></div>
         <div class="base">
@@ -225,7 +378,7 @@
       <div class="ground"><svg id="groundsvg" viewBox="0 0 440 46" preserveAspectRatio="none"></svg></div>
 
       <div class="today">
-        <div class="row"><h3>Today, you furnish three</h3><button class="sg" id="suggest">Suggest 3 ✨</button></div>
+        <div class="row"><h3>Today, you furnish three</h3><span class="dayname" id="dayname"></span><button class="sg" id="suggest">Suggest 3 ✨</button></div>
         <p>Drag a task in from the right — or tap ↑Today. It stays until you tick it done.</p>
         <div id="three"></div>
       </div>
@@ -234,9 +387,13 @@
     <div class="rightcol">
       <div class="colhead">
         <div class="vtog">
-          <button id="vRooms">🏠 By room</button>
+          <button id="vRooms">🛋️ Rooms</button>
           <button id="vNext">⏱ What's next</button>
+          <button id="vCal">📅 Calendar</button>
+          <button id="vTimeline">📊 Timeline</button>
+          <button id="vNotes">📓 Notes</button>
         </div>
+        <span style="flex:1"></span>
         <button class="tool" id="btnTags">🏷 Tags</button>
         <button class="tool" id="btnBlueprint">📐 Blueprint</button>
         <button class="tool" id="btnHelp">⚙ More</button>
@@ -253,17 +410,21 @@
     <input type="file" id="icsFile" accept=".ics,text/calendar" style="display:none">
   </div>
 </div>
-<div class="toast" id="toast"></div>
+<div id="toasts"></div>
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 
 <script>
 "use strict";
-/* ================= Balance House v6 =================
+/* ================= Balance House v7 =================
    Single-file app. Data model:
-   state = { v, why:{e,h,t}, tags:[{id,label,color}], rooms:[{id,name,wall,dot,floor,dependsOn,theme,style}],
-             tasks:[{id,t,tagId,deadline,d,roomIds:[]}], daily:{date,bricks[4],three:[{taskId,text,d}]},
-             streak:{n,last}, lastLevel, view, hideDone }
-   Storage: localStorage KEY + daily backup ring (7). Migrates from artifact-era balance_house_v3.
+   state = { v, why:{e,h,t}, tags:[{id,label,color}], rooms:[{id,name,wall,dot,floor,dependsOn,theme,style,windows,sort}],
+             tasks:[{id,t,tagId,deadline,d,roomIds:[],details,need,blocker,collab,moves,order,dependsOn,milestone}],
+             reminders:[{id,t,date,time,d}], events:[{id,t,date,dateEnd}], dump,
+             daily:{date,bricks[4],three:[{taskId,text,d}]},
+             streak:{n,last}, custom:{dusk}, lastLevel, levelSystem, view, hideDone }
+   Storage: localStorage KEY + daily backup ring (7) + Firebase cloud sync per account.
+   Backward compatible with every earlier save (v6 and artifact-era) — new fields
+   get defaults in normalize(), nothing existing is ever dropped.
 ====================================================== */
 const KEY="balance_house_v6";
 const OLD_KEYS=["balance_house_v3","balance_house_v2","balance_house_v1"];
@@ -330,6 +491,17 @@ function palette(room){
     amber:"#F2B441",metal:"#8FA3AD",sky:"#CFE2E8",line:"#E0DACB",muted:"#B9B29F"};
 }
 
+/* ---------- levels & unlocks (v7) */
+const LEVELS=[0,60,160,300,480,700,960,1260,1600,2000,2450];
+const UNLOCKS={
+  2:"Room customizing — the 🎨 button on any room now opens wall paint & styles.",
+  3:"Window styles — choose 1, 2 or 3 windows per room (in 🎨 customize).",
+  4:"The garden grows — your tree gets taller from here on.",
+  5:"A pet moves in — someone small now lives on your lawn.",
+  6:"Dusk sky — a calmer evening theme for your house (in 🎨 customize)."
+};
+function levelFor(xp){let l=1;LEVELS.forEach((t,i)=>{if(xp>=t)l=i+1;});return l;}
+
 /* ---------- default data: a blank generic house.
    Every visitor starts here and builds their own; personal houses live only in
    each account's cloud save (and that browser's local storage). */
@@ -341,17 +513,18 @@ function defaultTags(){return [
 ];}
 function seedState(){
   const rooms=[
-    {id:"project",name:"Main project",wall:"#E4EFEA",dot:"#3E8E7E",floor:1,dependsOn:null,theme:"cozy",style:0},
-    {id:"admin",name:"Admin & life",wall:"#F7EFDD",dot:"#D9A53A",floor:1,dependsOn:null,theme:"office",style:0},
-    {id:"creative",name:"Creative",wall:"#F6E7E0",dot:"#C77B53",floor:2,dependsOn:"project",theme:"studio",style:0},
-    {id:"learning",name:"Learning",wall:"#ECE7F6",dot:"#7C74C9",floor:2,dependsOn:null,theme:"library",style:0},
+    {id:"project",name:"Main project",wall:"#E4EFEA",dot:"#3E8E7E",floor:1,dependsOn:null,theme:"cozy",style:0,windows:2,sort:"manual"},
+    {id:"admin",name:"Admin & life",wall:"#F7EFDD",dot:"#D9A53A",floor:1,dependsOn:null,theme:"office",style:0,windows:2,sort:"manual"},
+    {id:"creative",name:"Creative",wall:"#F6E7E0",dot:"#C77B53",floor:2,dependsOn:"project",theme:"studio",style:0,windows:2,sort:"manual"},
+    {id:"learning",name:"Learning",wall:"#ECE7F6",dot:"#7C74C9",floor:2,dependsOn:null,theme:"library",style:0,windows:2,sort:"manual"},
   ];
   return {v:7,
     why:{e:"THE WHY",h:"Name your ultimate goal",t:"— balance it out —"},
     tags:defaultTags(),rooms,tasks:[],
+    reminders:[],events:[],dump:"",custom:{dusk:false},
     bricksDef:defaultBricks(),
     daily:{date:todayISO(),bricks:[false,false,false,false],three:[{taskId:null,text:"",d:false},{taskId:null,text:"",d:false},{taskId:null,text:"",d:false}]},
-    streak:{n:0,last:""},lastLevel:1,view:"rooms",hideDone:false,onboarded:false};
+    streak:{n:0,last:""},lastLevel:1,levelSystem:2,view:"rooms",hideDone:false,onboarded:false};
 }
 function defaultBricks(){return [
   {icon:"😴",label:"Slept",color:"#B5613E"},
@@ -372,7 +545,7 @@ function migrateFromOld(raw){
     old.rooms.forEach((r,i)=>{
       s.rooms.push({id:r.id||uid(),name:r.name||("Room "+(i+1)),wall:r.wall||"#E4EFEA",dot:r.dot||"#3E8E7E",
         floor:(r.id==="marketing"||r.id==="learning")?2:1,dependsOn:r.id==="marketing"?"sessions":null,
-        theme:themeGuess[r.id]||"cozy",style:0});
+        theme:themeGuess[r.id]||"cozy",style:0,windows:2,sort:"manual"});
       (r.tasks||[]).forEach(tk=>s.tasks.push({id:uid(),t:tk.t,tagId:tk.p||"week",deadline:tk.deadline||"",d:!!tk.d,roomIds:[r.id||s.rooms[s.rooms.length-1].id]}));
     });
     if(old.daily&&old.daily.date===todayISO()){
@@ -387,12 +560,33 @@ function migrateFromOld(raw){
 }
 function normalize(){
   if(!state.tags||!state.tags.length)state.tags=defaultTags();
+  if(!state.rooms)state.rooms=[];
   state.rooms.forEach(r=>{r.floor=r.floor||1;if(r.style===undefined)r.style=0;if(!THEMES[r.theme])r.theme="cozy";
+    if(![1,2,3].includes(r.windows))r.windows=2;
+    if(!["manual","date","pri","alpha"].includes(r.sort))r.sort="manual";
     if(r.dependsOn&&!state.rooms.some(x=>x.id===r.dependsOn))r.dependsOn=null;});
-  state.tasks.forEach(t=>{if(!Array.isArray(t.roomIds))t.roomIds=t.roomIds?[t.roomIds]:[];
+  if(!state.tasks)state.tasks=[];
+  state.tasks.forEach((t,i)=>{
+    if(!Array.isArray(t.roomIds))t.roomIds=t.roomIds?[t.roomIds]:(t.roomId?[t.roomId]:[]);
     t.roomIds=t.roomIds.filter(id=>state.rooms.some(r=>r.id===id));
     if(!state.tags.some(g=>g.id===t.tagId))t.tagId=state.tags[0].id;
-    if(t.deadline===undefined)t.deadline="";});
+    if(t.deadline===undefined)t.deadline="";
+    if(typeof t.details!=="string")t.details="";
+    if(typeof t.need!=="string")t.need="";
+    if(typeof t.blocker!=="string")t.blocker="";
+    if(typeof t.collab!=="string")t.collab="";
+    if(typeof t.moves!=="number")t.moves=0;
+    if(typeof t.order!=="number")t.order=i;
+    if(t.dependsOn===undefined)t.dependsOn=null;
+    if(t.milestone===undefined)t.milestone=false;
+  });
+  state.tasks.forEach(t=>{if(t.dependsOn&&(t.dependsOn===t.id||!state.tasks.some(x=>x.id===t.dependsOn)))t.dependsOn=null;});
+  if(!Array.isArray(state.reminders))state.reminders=[];
+  state.reminders.forEach(r=>{if(r.d===undefined)r.d=false;if(r.date===undefined)r.date="";if(r.time===undefined)r.time="";});
+  if(!Array.isArray(state.events))state.events=[];
+  state.events.forEach(ev=>{if(ev.date===undefined)ev.date="";if(ev.dateEnd===undefined)ev.dateEnd="";});
+  if(typeof state.dump!=="string")state.dump="";
+  if(!state.custom)state.custom={dusk:false};
   if(!state.streak)state.streak={n:0,last:""};
   if(!state.lastLevel)state.lastLevel=1;
   if(!state.why)state.why=seedState().why;
@@ -403,6 +597,11 @@ function normalize(){
   if(!state.daily)state.daily={date:todayISO(),bricks:[false,false,false,false],three:[]};
   state.daily.three=(state.daily.three||[]).slice(0,3).map(x=>({taskId:x.taskId||null,text:x.text||x.t||"",d:!!x.d}));
   while(state.daily.three.length<3)state.daily.three.push({taskId:null,text:"",d:false});
+  /* one-time switch to the v7 level curve: re-anchor lastLevel quietly, no popup */
+  if(state.levelSystem!==2){
+    state.levelSystem=2;
+    state.lastLevel=levelFor(xpOf());
+  }
 }
 function rollover(){
   if(state.daily.date===todayISO())return;
@@ -464,15 +663,33 @@ const inboxTasks=()=>state.tasks.filter(t=>!t.roomIds.length);
 function roomStats(rid){const ts=tasksForRoom(rid);const done=ts.filter(t=>t.d).length;return{done,all:ts.length,pct:ts.length?done/ts.length:0};}
 function totals(){const done=state.tasks.filter(t=>t.d).length,all=state.tasks.length;
   let lit=0;state.rooms.forEach(r=>{const s=roomStats(r.id);if(s.all&&s.done===s.all)lit++;});return{done,all,lit};}
+function xpOf(){const{done,lit}=totals();return done*10+lit*50+state.streak.n*15;}
+function depOf(t){return t.dependsOn?taskById(t.dependsOn):null;}
+function isBlocked(t){const d=depOf(t);return !!(d&&!d.d);}
+function hasDetails(t){return !!((t.details&&t.details.trim())||(t.need&&t.need.trim())||(t.blocker&&t.blocker.trim())||(t.collab&&t.collab.trim()));}
 function bucketOf(s){if(!s)return"none";const diff=Math.round((new Date(s+"T00:00")-new Date(todayISO()+"T00:00"))/864e5);
   if(diff<0)return"over";if(diff===0)return"today";if(diff<=7)return"week";return"later";}
 function shade(hex,f){const n=parseInt(hex.slice(1),16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
   r=Math.max(0,Math.min(255,Math.round(r+f)));g=Math.max(0,Math.min(255,Math.round(g+f)));b=Math.max(0,Math.min(255,Math.round(b+f)));
   return"#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
 function pillStyle(tag){return`background:${tag.color}20;color:${tag.color}`;}
-function toast(m,big){const t=document.getElementById("toast");t.textContent=m;t.classList.toggle("big",!!big);t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),big?2600:1700);}
+function eventCovers(ev,iso){if(!ev.date)return false;const end=(ev.dateEnd&&ev.dateEnd>ev.date)?ev.dateEnd:ev.date;return iso>=ev.date&&iso<=end;}
+
+/* ---------- session-only UI state (not saved, not synced) */
+const ui={calMode:"month",cal:null,weekOff:0,openTask:null,notesRoom:null,bannerDismissed:false,
+  remDraft:{t:"",date:"",dateEnd:"",time:"",kind:"rem"}};
+let dragging=null; /* {type:'task'|'rem'|'event', id} for calendar drags */
+
+/* ---------- toasts */
+function toast(m,big){
+  const box=document.getElementById("toasts");
+  const t=document.createElement("div");t.className="toastn"+(big?" big":"");t.textContent=m;
+  box.appendChild(t);
+  while(box.children.length>3)box.removeChild(box.firstChild);
+  setTimeout(()=>{if(t.parentNode)t.remove();},big?3400:2400);
+}
 function confetti(x,y){
-  const colors=["#F2B441","#3E8E7E","#C77B53","#7C74C9","#FFE7A6"];
+  const colors=["#F2B441","#C5181C","#1B2E4D","#3E8E7E","#FFE7A6"];
   const cx=x??innerWidth/2, cy=y??innerHeight/3;
   for(let i=0;i<16;i++){
     const d=document.createElement("div");d.className="confetti";
@@ -484,24 +701,41 @@ function confetti(x,y){
     document.body.appendChild(d);setTimeout(()=>d.remove(),1200);
   }
 }
+function bigBurst(){
+  [0.2,0.5,0.8].forEach((f,i)=>setTimeout(()=>confetti(innerWidth*f,innerHeight/4),i*160));
+}
+
+/* ---------- gentle reflection when a deadline keeps sliding */
+function bumpMoves(tk){
+  tk.moves=(tk.moves||0)+1;
+  if(tk.moves===3)reflectionModal(tk,"Why are you postponing this?","“"+tk.t+"” has moved three times now. No judgement — sometimes naming the reason makes it smaller.");
+  else if(tk.moves===5)reflectionModal(tk,"Is something preventing you from getting ahead with this?","Maybe other tasks had higher priority, or life just happened — that's okay. Would breaking it into a smaller first step help?");
+}
 
 /* track newest furniture for drop animation */
 let justFurnished=null; // roomId
 
 /* ---------- render: HUD */
 function renderHUD(){
-  const {done,all,lit}=totals();
+  const {done,all}=totals();
   document.getElementById("pct").textContent=(all?Math.round(done/all*100):0)+"%";
   const e=state.daily.bricks.filter(Boolean).length/4*100;
   const bat=document.getElementById("bat");bat.classList.toggle("low",e<50);
   document.getElementById("batf").style.width=e+"%";
   document.getElementById("streak").textContent="🔥 "+state.streak.n;
-  const xp=done*10+lit*50+state.streak.n*15;
-  const lvl=Math.floor(xp/200)+1;
-  document.getElementById("xp").textContent="XP "+xp+" · Lvl "+lvl;
+  const xp=xpOf();
+  const lvl=levelFor(xp);
+  const base=LEVELS[lvl-1],next=LEVELS[lvl]||(base+500);
+  document.getElementById("lvlpill").textContent="Lvl "+lvl;
+  document.getElementById("xptext").textContent=xp+" XP";
+  document.getElementById("lvlbarf").style.width=Math.min(100,Math.round((xp-base)/(next-base)*100))+"%";
   document.getElementById("smoke").style.display=e>=75?"":"none";
   document.getElementById("rooflag").style.display=lvl>=2?"":"none";
-  if(lvl>state.lastLevel){state.lastLevel=lvl;save();toast("🏆 Level "+lvl+" — the house grew!",true);confetti();}
+  const t=todayISO();
+  document.getElementById("garland").style.display=state.events.some(ev=>eventCovers(ev,t))?"":"none";
+  document.getElementById("mailN").textContent=state.reminders.filter(r=>!r.d).length+state.events.length;
+  document.body.classList.toggle("dusk",!!(state.custom.dusk&&lvl>=6));
+  if(lvl>state.lastLevel){state.lastLevel=lvl;save();levelUpModal(lvl);bigBurst();}
   else if(lvl<state.lastLevel){state.lastLevel=lvl;save();}
 }
 /* ---------- render: vision + ground */
@@ -515,9 +749,9 @@ function renderVision(){
   };
 }
 function renderGround(){
-  const {done,all}=totals();const xp=done*10;const lvl=state.lastLevel;
+  const lvl=state.lastLevel;
   const g=document.getElementById("groundsvg");
-  const tree=Math.min(lvl,5);
+  const tree=Math.min(lvl>=4?lvl+1:lvl,7);
   let flowers="";
   for(let i=0;i<Math.min(state.streak.n,8);i++){
     const fx=30+i*22;
@@ -528,6 +762,7 @@ function renderGround(){
     <rect x="196" y="14" width="48" height="32" fill="#D8CBAB"/>
     <rect x="196" y="14" width="48" height="4" fill="#C9BA95"/>
     ${flowers}
+    ${lvl>=5?'<text x="352" y="41" font-size="15">🐕</text>':''}
     <g transform="translate(${400},30)">
       <rect x="-2" y="${-2-tree*2}" width="4" height="${6+tree*2}" fill="#8A6B45"/>
       <circle cx="0" cy="${-6-tree*3}" r="${5+tree*2.2}" fill="#3E8E7E"/>
@@ -565,8 +800,11 @@ function roomSVG(room){
         <line x1="8" y1="72" x2="100" y2="34"/><line x1="100" y1="34" x2="192" y2="72"/><line x1="8" y1="110" x2="100" y2="72"/><line x1="100" y1="72" x2="192" y2="110"/>
       </g>
     </g>`:"";
-  const winFill=lit?"#FFE7A6":"#CFE2E8";
-  const winGlow=lit?`<circle cx="26" cy="46" r="16" fill="#FFE7A6" opacity=".45"/><circle cx="174" cy="46" r="16" fill="#FFE7A6" opacity=".45"/>`:"";
+  const duskOn=document.body.classList.contains("dusk");
+  const winFill=lit?"#FFE7A6":(duskOn?"#33456B":"#CFE2E8");
+  const winXs=room.windows===1?[86]:(room.windows===3?[12,86,160]:[12,160]);
+  const winGlow=lit?winXs.map(x=>`<circle cx="${x+14}" cy="46" r="16" fill="#FFE7A6" opacity=".45"/>`).join(""):"";
+  const wins=winXs.map(x=>`<g><rect x="${x}" y="32" width="28" height="26" fill="${winFill}" stroke="#fff" stroke-width="3"/><line x1="${x+14}" y1="32" x2="${x+14}" y2="58" stroke="#fff" stroke-width="1.6"/><line x1="${x}" y1="45" x2="${x+28}" y2="45" stroke="#fff" stroke-width="1.6"/></g>`).join("");
   const glowLayer=lit?`<rect x="0" y="0" width="200" height="130" fill="url(#glow_${room.id})"/>`:"";
   return `<svg viewBox="0 0 200 130" preserveAspectRatio="none">
     <defs><radialGradient id="glow_${room.id}" cx=".5" cy=".62" r=".7">
@@ -579,8 +817,7 @@ function roomSVG(room){
     <g stroke="${v.wood}" stroke-width="1"><line x1="25" y1="104" x2="25" y2="130"/><line x1="50" y1="104" x2="50" y2="130"/><line x1="75" y1="104" x2="75" y2="130"/><line x1="100" y1="104" x2="100" y2="130"/><line x1="125" y1="104" x2="125" y2="130"/><line x1="150" y1="104" x2="150" y2="130"/><line x1="175" y1="104" x2="175" y2="130"/></g>
     <rect x="0" y="102" width="200" height="3" fill="${v.wood}"/>
     ${winGlow}
-    <g><rect x="12" y="32" width="28" height="26" fill="${winFill}" stroke="#fff" stroke-width="3"/><line x1="26" y1="32" x2="26" y2="58" stroke="#fff" stroke-width="1.6"/><line x1="12" y1="45" x2="40" y2="45" stroke="#fff" stroke-width="1.6"/></g>
-    <g><rect x="160" y="32" width="28" height="26" fill="${winFill}" stroke="#fff" stroke-width="3"/><line x1="174" y1="32" x2="174" y2="58" stroke="#fff" stroke-width="1.6"/><line x1="160" y1="45" x2="188" y2="45" stroke="#fff" stroke-width="1.6"/></g>
+    ${wins}
     ${glowLayer}
     ${parts}
     ${extra}
@@ -607,12 +844,10 @@ function renderHouse(){
       el.innerHTML=roomSVG(room)+
         `<div class="rlabel">${esc(room.name)}</div><div class="rcnt">${stats.done}/${stats.all}</div>`+
         (dep?`<div class="deptag">${depUnmet?"🚧":"✓"} builds on ${esc(dep.name)}</div>`:"")+
-        `<button class="paint" title="change room style">🎨</button>`;
+        `<button class="paint" title="customize this room">🎨</button>`;
       el.onclick=e=>{
-        if(e.target.classList.contains("paint")){
-          room.style=((room.style||0)+1)%3;save();renderHouse();
-          toast("🎨 "+room.name+" → "+STYLE_NAMES[room.style]+" (new floor, walls & furniture colours)");return;}
-        state.view="rooms";save();renderTasks();renderToggle();
+        if(e.target.classList.contains("paint")){paintModal(room.id);return;}
+        state.view="rooms";save();renderTasks();renderToggle();renderInbox();
         const s=document.getElementById("cat-"+room.id);if(s)s.scrollIntoView({behavior:"smooth",block:"start"});
       };
       /* drag rooms to rearrange the house */
@@ -710,6 +945,7 @@ function addToToday(taskId){
   save();renderThree();toast("Added to today ✨");
 }
 function renderThree(){
+  document.getElementById("dayname").textContent=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][new Date().getDay()];
   const c=document.getElementById("three");c.innerHTML="";
   state.daily.three.forEach((s,i)=>{
     const pin=i===0?"BIG":"small";
@@ -739,6 +975,7 @@ function toggleTask(tk,val,ev){
     const room=tk.roomIds[0]?roomById(tk.roomIds[0]):null;
     if(room){const st=roomStats(room.id);
       if(st.done===st.all){toast(room.name+" complete ✨ the lights came on",true);}
+      else if(tk.milestone)toast("🚩 Milestone reached ✨ +1 furnished");
       else toast("+1 furnished ✨");
     }else toast("Done ✓");
     if(ev)confetti(ev.clientX,ev.clientY);
@@ -747,27 +984,83 @@ function toggleTask(tk,val,ev){
   save();renderAll();
   if(val)checkThreeWin();
 }
-function taskRow(tk,showRoomDot){
+function addTaskTo(roomId,text){
+  const order=Math.max(-1,...state.tasks.map(t=>t.order))+1;
+  state.tasks.push({id:uid(),t:text,tagId:state.tags[0].id,deadline:"",d:false,roomIds:roomId?[roomId]:[],
+    details:"",need:"",blocker:"",collab:"",moves:0,order,dependsOn:null,milestone:false});
+  save();renderAll();
+}
+function detailsBox(tk){
+  const box=document.createElement("div");box.className="detbox";
+  const depOpts=state.tasks.filter(x=>x.id!==tk.id&&!x.d).map(x=>`<option value="${x.id}" ${tk.dependsOn===x.id?"selected":""}>${esc(x.t)}</option>`).join("");
+  box.innerHTML=`
+    <div><div class="detlabel">Details <i>(optional — only if it helps)</i></div>
+    <textarea data-k="details" placeholder="Anything worth remembering: steps, links, context…">${esc(tk.details)}</textarea></div>
+    <input type="text" data-k="need" value="${esc(tk.need)}" placeholder="What do you need for this to be done? (optional)">
+    <input type="text" data-k="blocker" value="${esc(tk.blocker)}" placeholder="Is anything preventing you from getting ahead? (optional)">
+    <input type="text" data-k="collab" value="${esc(tk.collab)}" placeholder="Anyone to involve or ask for help? (optional)">
+    <div class="detrow">
+      <label>starts after
+        <select data-k="dep"><option value="">nothing — independent</option>${depOpts}</select>
+      </label>
+      <label style="cursor:pointer;display:flex;align-items:center;gap:5px">
+        <input type="checkbox" data-k="ms" ${tk.milestone?"checked":""} style="accent-color:#C5181C;width:15px;height:15px">🚩 milestone
+      </label>
+    </div>`;
+  box.querySelector('[data-k="details"]').oninput=e=>{tk.details=e.target.value;save();};
+  box.querySelector('[data-k="need"]').oninput=e=>{tk.need=e.target.value;save();};
+  box.querySelector('[data-k="blocker"]').oninput=e=>{tk.blocker=e.target.value;save();};
+  box.querySelector('[data-k="collab"]').oninput=e=>{tk.collab=e.target.value;save();};
+  box.querySelector('[data-k="dep"]').onchange=e=>{tk.dependsOn=e.target.value||null;save();renderTasks();};
+  box.querySelector('[data-k="ms"]').onchange=e=>{tk.milestone=e.target.checked;save();renderTasks();};
+  return box;
+}
+function taskRow(tk,ctxRoom){
   const li=document.createElement("li");li.className=tk.d?"done":"";li.draggable=true;
   const tag=tagById(tk.tagId);
+  const open=ui.openTask===tk.id;
+  const dep=depOf(tk);
   const dots=tk.roomIds.map(id=>{const r=roomById(id);return r?`<span class="ndot" style="background:${r.dot}" title="${esc(r.name)}"></span>`:"";}).join("");
+  const manual=ctxRoom&&ctxRoom.sort==="manual";
   li.innerHTML=`<input type="checkbox" class="tk" ${tk.d?"checked":""}>
+    ${tk.milestone?'<span class="msflag" title="milestone">🚩</span>':""}
     <span class="tn" title="click to edit">${esc(tk.t)}</span>
     <span class="ctl">
+      <button class="chev" title="Details &amp; options">${open?"▾":"▸"}</button>
+      ${dep&&!dep.d?`<span class="blockedb" title="Waits on: ${esc(dep.t)}">⛓</span>`:""}
+      ${!open&&hasDetails(tk)?'<button class="hasdet" title="This task has details">📝</button>':""}
+      ${tk.moves>=3?`<span class="movesb" title="This deadline has moved a few times — that's okay">↻${tk.moves}</span>`:""}
       <button class="pri" style="${pillStyle(tag)}" title="tap to change tag">${esc(tag.label)}</button>
       <input type="date" class="di ${tk.deadline?"":"empty"}" value="${tk.deadline||""}">
       <span class="rdots" title="rooms — tap to edit">${dots||'<span style="font-size:10px;color:#b3ab98">rooms?</span>'}</span>
-      <button class="up">↑Today</button><button class="del">&times;</button>
+      <button class="up">↑Today</button>
+      ${manual?'<span class="udwrap"><button class="mvup">▲</button><button class="mvdn">▼</button></span>':""}
+      <button class="del">&times;</button>
     </span>`;
   li.querySelector(".tk").onchange=e=>toggleTask(tk,e.target.checked,e);
+  li.querySelector(".chev").onclick=()=>{ui.openTask=open?null:tk.id;renderTasks();};
+  const hd=li.querySelector(".hasdet");if(hd)hd.onclick=()=>{ui.openTask=tk.id;renderTasks();};
   li.querySelector(".pri").onclick=()=>{
     const idx=state.tags.findIndex(g=>g.id===tk.tagId);
     tk.tagId=state.tags[(idx+1)%state.tags.length].id;save();renderTasks();};
-  li.querySelector(".di").onchange=e=>{tk.deadline=e.target.value;save();renderTasks();};
+  li.querySelector(".di").onchange=e=>{
+    const v=e.target.value;
+    if(tk.deadline&&v&&tk.deadline!==v)bumpMoves(tk);
+    tk.deadline=v;save();renderTasks();};
   li.querySelector(".up").onclick=()=>addToToday(tk.id);
+  if(manual){
+    const list=()=>tasksForRoom(ctxRoom.id).sort((a,b)=>a.order-b.order);
+    li.querySelector(".mvup").onclick=()=>{
+      const l=list(),i=l.findIndex(x=>x.id===tk.id);
+      if(i>0){const tmp=l[i].order;l[i].order=l[i-1].order;l[i-1].order=tmp;save();renderTasks();}};
+    li.querySelector(".mvdn").onclick=()=>{
+      const l=list(),i=l.findIndex(x=>x.id===tk.id);
+      if(i>=0&&i<l.length-1){const tmp=l[i].order;l[i].order=l[i+1].order;l[i+1].order=tmp;save();renderTasks();}};
+  }
   li.querySelector(".del").onclick=()=>{
     if(!confirm("Delete task: "+tk.t+"?"))return;
     state.tasks=state.tasks.filter(x=>x!==tk);
+    state.tasks.forEach(x=>{if(x.dependsOn===tk.id)x.dependsOn=null;});
     state.daily.three.forEach(s=>{if(s.taskId===tk.id){s.taskId=null;s.text="";s.d=false;}});
     save();renderAll();};
   li.querySelector(".rdots").onclick=()=>{
@@ -803,31 +1096,38 @@ function taskRow(tk,showRoomDot){
     nameSpan.onblur=()=>finish(true);
   };
   li.ondragstart=e=>e.dataTransfer.setData("text/plain",tk.id);
+  if(open)li.appendChild(detailsBox(tk));
   return li;
 }
 /* ---------- views */
 function renderInbox(){
   const wrap=document.getElementById("inboxWrap");wrap.innerHTML="";
-  const items=inboxTasks();
+  if(state.view!=="rooms")return;
+  const items=inboxTasks().sort((a,b)=>a.order-b.order);
   const sec=document.createElement("div");sec.className="cat inbox";
-  sec.innerHTML=`<div class="cat-header"><h3>📥 Inbox</h3>
+  sec.innerHTML=`<div class="cat-header"><h3>🧰 Inbox</h3>
     <button class="hidebtn" id="icsBtn">📅 Import calendar (.ics)</button></div>
     <div class="sub">Quick-capture or calendar imports land here. Tap "rooms?" on a task to place it in the house.</div>`;
   const ul=document.createElement("ul");ul.className="tasks";
-  items.forEach(tk=>ul.appendChild(taskRow(tk,false)));
+  items.forEach(tk=>ul.appendChild(taskRow(tk,null)));
   sec.appendChild(ul);
   const add=document.createElement("div");add.className="addrow";
   add.innerHTML=`<input type="text" placeholder="brain-dump a task or idea… (Enter)"><button title="add">+</button>`;
   const inp=add.querySelector("input");
-  const doAdd=()=>{const v2=inp.value.trim();if(!v2)return;
-    state.tasks.push({id:uid(),t:v2,tagId:state.tags[0].id,deadline:"",d:false,roomIds:[]});
-    inp.value="";save();renderAll();};
+  const doAdd=()=>{const v2=inp.value.trim();if(!v2)return;addTaskTo(null,v2);};
   inp.onkeydown=e=>{if(e.key==="Enter")doAdd();};
   add.querySelector("button").onclick=doAdd;
   sec.appendChild(add);
   wrap.appendChild(sec);
   sec.querySelector("#icsBtn").onclick=()=>document.getElementById("icsFile").click();
-  if(!items.length&&true){/* keep inbox visible as capture point */}
+}
+function sortedRoomTasks(room){
+  const ts=tasksForRoom(room.id);
+  const tagOrder=id=>state.tags.findIndex(g=>g.id===id);
+  if(room.sort==="date")return [...ts].sort((a,b)=>{const da=a.deadline||"9999",db=b.deadline||"9999";return da<db?-1:da>db?1:0;});
+  if(room.sort==="pri")return [...ts].sort((a,b)=>tagOrder(a.tagId)-tagOrder(b.tagId));
+  if(room.sort==="alpha")return [...ts].sort((a,b)=>a.t.localeCompare(b.t));
+  return [...ts].sort((a,b)=>a.order-b.order);
 }
 function renderRoomsView(wrap){
   state.rooms.forEach(room=>{
@@ -836,25 +1136,33 @@ function renderRoomsView(wrap){
     const sec=document.createElement("div");sec.className="cat";sec.id="cat-"+room.id;
     const dep=room.dependsOn?roomById(room.dependsOn):null;
     sec.innerHTML=`<div class="cat-header"><h3><span class="dot" style="background:${room.dot}"></span>${esc(room.name)}</h3>
+      <select class="sortsel" title="order tasks">
+        <option value="manual" ${room.sort==="manual"?"selected":""}>my order</option>
+        <option value="date" ${room.sort==="date"?"selected":""}>by date</option>
+        <option value="pri" ${room.sort==="pri"?"selected":""}>by tag</option>
+        <option value="alpha" ${room.sort==="alpha"?"selected":""}>A–Z</option>
+      </select>
       <button class="hidebtn ${state.hideDone?"on":""}" data-toggle="hide">${state.hideDone?"Show done":"Hide done"}</button></div>
       <div class="cc">${stats.done}/${stats.all} built${dep?` · builds on <b>${esc(dep.name)}</b>`:""}</div>
       <div class="roombar"><span style="width:${pct}%;background:${room.dot}"></span></div>
-      <div class="sub">Tap name to edit · tag to cycle · date to set deadline · room dots to re-home · drag left into Today.</div>`;
+      <div class="sub">Tap name to edit · ▸ for details · tag to cycle · date to set deadline · room dots to re-home · drag left into Today.</div>`;
     const ul=document.createElement("ul");ul.className="tasks";
-    tasksForRoom(room.id).forEach(tk=>{if(state.hideDone&&tk.d)return;ul.appendChild(taskRow(tk,false));});
+    sortedRoomTasks(room).forEach(tk=>{if(state.hideDone&&tk.d)return;ul.appendChild(taskRow(tk,room));});
     sec.appendChild(ul);
     const add=document.createElement("div");add.className="addrow";
     add.innerHTML=`<input type="text" placeholder="new task for ${esc(room.name)}… (Enter)"><button title="add">+</button>`;
     const inp=add.querySelector("input");
-    const doAdd=()=>{const v2=inp.value.trim();if(!v2)return;
-      state.tasks.push({id:uid(),t:v2,tagId:state.tags[0].id,deadline:"",d:false,roomIds:[room.id]});
-      inp.value="";save();renderAll();};
+    const doAdd=()=>{const v2=inp.value.trim();if(!v2)return;addTaskTo(room.id,v2);};
     inp.onkeydown=e=>{if(e.key==="Enter")doAdd();};
     add.querySelector("button").onclick=doAdd;
     sec.appendChild(add);
+    sec.querySelector(".sortsel").onchange=e=>{room.sort=e.target.value;save();renderTasks();};
     sec.querySelector('[data-toggle="hide"]').onclick=()=>{state.hideDone=!state.hideDone;save();renderTasks();};
     wrap.appendChild(sec);
   });
+  const hint=document.createElement("div");hint.className="bphint";
+  hint.textContent="Add or rearrange rooms in 📐 Blueprint.";
+  wrap.appendChild(hint);
 }
 function renderNextView(wrap){
   const items=state.tasks.filter(t=>!t.d&&t.roomIds.length);
@@ -870,25 +1178,281 @@ function renderNextView(wrap){
     const bk=document.createElement("div");bk.className="bucket "+cls;
     bk.innerHTML=`<h4>${title} <span class="pipe"></span> ${buckets[k].length}</h4>`;
     const ul=document.createElement("ul");ul.className="tasks";
-    buckets[k].forEach(tk=>ul.appendChild(taskRow(tk,true)));
+    buckets[k].forEach(tk=>ul.appendChild(taskRow(tk,null)));
     bk.appendChild(ul);wrap.appendChild(bk);
   });
   if(!any){const e=document.createElement("div");e.className="cat";e.innerHTML='<div class="cc">Nothing left undone. Rest is the task 💚</div>';wrap.appendChild(e);}
 }
+/* ---------- calendar view */
+function dropOnDay(iso){
+  if(!dragging)return;
+  const d=dragging;dragging=null;
+  if(d.type==="task"){
+    const tk=taskById(d.id);if(!tk||tk.deadline===iso)return;
+    const had=!!tk.deadline;tk.deadline=iso;
+    if(had)bumpMoves(tk);
+    save();renderAll();toast("Deadline moved to "+iso+" 📅");
+  }else if(d.type==="rem"){
+    const r=state.reminders.find(x=>x.id===d.id);if(!r||r.date===iso)return;
+    r.date=iso;save();renderAll();toast("Reminder moved 🔔");
+  }else if(d.type==="event"){
+    const ev=state.events.find(x=>x.id===d.id);if(!ev||ev.date===iso)return;
+    if(ev.date&&ev.dateEnd&&ev.dateEnd>ev.date){
+      const delta=(new Date(iso+"T00:00")-new Date(ev.date+"T00:00"))/864e5;
+      ev.dateEnd=localISO(new Date(new Date(ev.dateEnd+"T00:00").getTime()+delta*864e5));
+    }
+    ev.date=iso;save();renderAll();toast("Event moved 🎊");
+  }
+}
+function chipEl(kind,o,label,dotColor,extraClass,full){
+  const c=document.createElement("div");c.className="calchip "+extraClass;c.draggable=true;c.title=full;
+  c.innerHTML=`<span class="cdot" style="background:${dotColor}"></span><span class="ct">${esc(label)}</span>`;
+  c.ondragstart=e=>{e.dataTransfer.setData("text/plain","cal");dragging={type:kind,id:o.id};};
+  return c;
+}
+function chipsFor(iso){
+  const chips=[];
+  state.events.filter(ev=>eventCovers(ev,iso)).forEach(ev=>{
+    chips.push(chipEl("event",ev,"🎊 "+ev.t,"#3E7C6E","evchip","Event — the house is hosting: "+ev.t+(ev.dateEnd&&ev.dateEnd>ev.date?" ("+ev.date+" → "+ev.dateEnd+")":"")));
+  });
+  state.tasks.filter(t=>t.deadline===iso).forEach(t=>{
+    const room=t.roomIds[0]?roomById(t.roomIds[0]):null;
+    chips.push(chipEl("task",t,(t.milestone?"🚩 ":"")+t.t,room?room.dot:"#B29A62",t.d?"donechip":"",t.t+(t.details?" — "+t.details:"")));
+  });
+  state.reminders.filter(r=>r.date===iso).forEach(r=>{
+    const el=chipEl("rem",r,(r.time?r.time+" · ":"")+r.t,"#F2B441","remchip","Reminder: "+r.t);
+    if(r.d)el.querySelector(".ct").style.textDecoration="line-through";
+    chips.push(el);
+  });
+  return chips;
+}
+function makeDayCell(d,inMonth,isWeekMode,dayLabel){
+  const today=new Date();today.setHours(0,0,0,0);
+  const iso=localISO(d);
+  const cell=document.createElement("div");
+  cell.className="calcell"+(isWeekMode?" wk":"")+(d.getTime()===today.getTime()?" tdy":"")+(inMonth?"":" out");
+  const num=document.createElement("div");num.className="cnum";num.textContent=dayLabel;
+  if(isWeekMode)num.style.textAlign="center";
+  cell.appendChild(num);
+  const col=document.createElement("div");col.className="chipscol";
+  chipsFor(iso).forEach(ch=>col.appendChild(ch));
+  cell.appendChild(col);
+  cell.ondragover=e=>{e.preventDefault();cell.classList.add("dragover");};
+  cell.ondragleave=()=>cell.classList.remove("dragover");
+  cell.ondrop=e=>{e.preventDefault();cell.classList.remove("dragover");
+    /* task rows dragged from the lists also carry their id as plain text */
+    if(!dragging){const id=e.dataTransfer.getData("text/plain");if(id&&taskById(id))dragging={type:"task",id};}
+    dropOnDay(iso);};
+  return cell;
+}
+function renderCalendar(wrap){
+  const monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const dayNames=["MON","TUE","WED","THU","FRI","SAT","SUN"];
+  const today=new Date();today.setHours(0,0,0,0);
+  const cal=ui.cal||{y:today.getFullYear(),m:today.getMonth()};
+  const monday=new Date(today);monday.setDate(today.getDate()-((today.getDay()+6)%7)+ui.weekOff*7);
+  const weekEnd=new Date(monday);weekEnd.setDate(monday.getDate()+6);
+  const title=ui.calMode==="month"?monthNames[cal.m]+" "+cal.y
+    :monthNames[monday.getMonth()]+" "+monday.getDate()+" – "+(weekEnd.getMonth()===monday.getMonth()?"":monthNames[weekEnd.getMonth()]+" ")+weekEnd.getDate();
+  const sec=document.createElement("div");sec.className="cat";
+  sec.innerHTML=`<div class="calhead">
+      <button class="navbtn" id="calPrev">‹</button>
+      <div class="caltitle">${title}</div>
+      <button class="navbtn" id="calNext">›</button>
+      <button class="todaybtn" id="calToday">today</button>
+      <span style="flex:1"></span>
+      <div class="seg">
+        <button id="calMM" class="${ui.calMode==="month"?"on":""}">Month</button>
+        <button id="calMW" class="${ui.calMode==="week"?"on":""}">Week</button>
+      </div>
+      <button class="todaybtn" id="calAdd">+ reminder / event</button>
+    </div>
+    <div class="calhint">Drag any task, reminder or event onto another day to move its date. Drag a task from the lists here too.</div>
+    <div class="dnames">${dayNames.map(n=>`<div class="dname">${n}</div>`).join("")}</div>`;
+  const grid=document.createElement("div");grid.className="calgrid";
+  if(ui.calMode==="month"){
+    const first=new Date(cal.y,cal.m,1);
+    const lead=(first.getDay()+6)%7;
+    const daysIn=new Date(cal.y,cal.m+1,0).getDate();
+    const rows=Math.ceil((lead+daysIn)/7);
+    for(let i=0;i<rows*7;i++){
+      const d=new Date(cal.y,cal.m,i-lead+1);
+      grid.appendChild(makeDayCell(d,d.getMonth()===cal.m,false,d.getDate()));
+    }
+  }else{
+    for(let i=0;i<7;i++){
+      const d=new Date(monday);d.setDate(monday.getDate()+i);
+      grid.appendChild(makeDayCell(d,true,true,dayNames[i]+" "+d.getDate()));
+    }
+  }
+  sec.appendChild(grid);
+  wrap.appendChild(sec);
+  sec.querySelector("#calPrev").onclick=()=>{
+    if(ui.calMode==="month"){const m=cal.m-1;ui.cal={y:m<0?cal.y-1:cal.y,m:(m+12)%12};}
+    else ui.weekOff--;
+    renderTasks();};
+  sec.querySelector("#calNext").onclick=()=>{
+    if(ui.calMode==="month"){const m=cal.m+1;ui.cal={y:m>11?cal.y+1:cal.y,m:m%12};}
+    else ui.weekOff++;
+    renderTasks();};
+  sec.querySelector("#calToday").onclick=()=>{ui.cal=null;ui.weekOff=0;renderTasks();};
+  sec.querySelector("#calMM").onclick=()=>{ui.calMode="month";renderTasks();};
+  sec.querySelector("#calMW").onclick=()=>{ui.calMode="week";renderTasks();};
+  sec.querySelector("#calAdd").onclick=mailboxModal;
+}
+/* ---------- timeline view */
+function renderTimeline(wrap){
+  const today=new Date();today.setHours(0,0,0,0);
+  const tIso=todayISO();
+  const days=Array.from({length:14},(_,i)=>{const d=new Date(today);d.setDate(today.getDate()+i);return d;});
+  const wd=["SU","MO","TU","WE","TH","FR","SA"];
+  const sec=document.createElement("div");sec.className="cat";
+  sec.innerHTML=`<h3 style="margin:0 0 4px;font-size:15px;display:flex">📊 Timeline — next 14 days</h3>
+    <div class="sub" style="margin-bottom:10px">Bars run from today (or from the task they build on) to their deadline. ◆ marks a milestone, ⛓ waits on another task.</div>`;
+  const head=document.createElement("div");head.className="tlhead";
+  head.innerHTML=`<div></div><div class="tldays">${days.map((d,i)=>{
+    const wknd=d.getDay()===0||d.getDay()===6;
+    const color=i===0?"#C5181C":(wknd?"#B29A62":"#7C8698");
+    return `<div class="tld" style="background:${i===0?"#FBEAE3":"transparent"}"><div class="w" style="color:${color}">${i===0?"TODAY":wd[d.getDay()]}</div><div class="n" style="color:${color}">${d.getDate()}</div></div>`;
+  }).join("")}</div>`;
+  sec.appendChild(head);
+  const trackBg="repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/14 - 1px),#EADFCE calc(100%/14 - 1px),#EADFCE calc(100%/14)),linear-gradient(90deg,"+days.map((d,i)=>{
+    const wknd=d.getDay()===0||d.getDay()===6;
+    const c=i===0?"#FBEAE3":(wknd?"#F6F0E1":"#FDFAF3");
+    return c+" "+(i/14*100).toFixed(2)+"%,"+c+" "+((i+1)/14*100).toFixed(2)+"%";
+  }).join(",")+")";
+  const endIso=localISO(days[13]);
+  const open=state.tasks.filter(t=>!t.d);
+  const inWin=open.filter(t=>t.deadline&&t.deadline<=endIso);
+  const dayIdx=iso=>days.findIndex(d=>localISO(d)===iso);
+  const rows=inWin.map(t=>{
+    const room=t.roomIds[0]?roomById(t.roomIds[0]):null;
+    const dot=room?room.dot:"#B29A62";
+    const overdue=t.deadline<tIso;
+    const endIdx=overdue?0:dayIdx(t.deadline);
+    const dep=depOf(t);
+    let startIdx=0,conflict=false;
+    if(dep&&dep.deadline&&!dep.d){
+      const di=dayIdx(dep.deadline);
+      if(di>=0){if(di+1>endIdx){conflict=true;startIdx=endIdx;}else startIdx=di+1;}
+      else if(dep.deadline>endIso){conflict=true;startIdx=endIdx;}
+    }
+    const span=Math.max(1,endIdx-startIdx+1);
+    return {t,dot,dep,overdue,conflict,startIdx,endIdx,span};
+  }).sort((a,b)=>a.startIdx-b.startIdx||a.span-b.span);
+  rows.forEach(r=>{
+    const row=document.createElement("div");row.className="tlrow";
+    const barBg=r.overdue?"#C5181C":(r.conflict?"#B26A00":r.dot);
+    const barLabel=r.overdue?"overdue":(r.conflict?"⚠ due before its base task":(r.dep&&!r.dep.d?"⛓":""));
+    const title=r.t.t+" — due "+r.t.deadline+(r.dep?" · after: "+r.dep.t:"")+(r.conflict?" · ⚠ its base task finishes later — consider moving this deadline":"");
+    row.innerHTML=`<div class="tlname">
+        <div class="nm"><span class="ndot" style="background:${r.dot}"></span><span>${esc(r.t.t)}</span></div>
+        ${r.dep?`<div class="tlafter">after: ${esc(r.dep.t)}</div>`:""}
+      </div>
+      <div class="tltrack" style="background:${trackBg}">
+        <div class="tlbar" title="${esc(title)}" style="left:${(r.startIdx/14*100).toFixed(2)}%;width:${(r.span/14*100).toFixed(2)}%;background:${barBg}"><span>${barLabel}</span></div>
+        ${r.t.milestone?`<span class="tldiamond" style="left:${(((r.endIdx+0.5)/14)*100-1).toFixed(2)}%">◆</span>`:""}
+      </div>`;
+    sec.appendChild(row);
+  });
+  if(!rows.length){
+    const e=document.createElement("div");e.className="tlempty";
+    e.textContent="No open tasks with deadlines in the next two weeks. Give a few tasks a date and they'll appear here.";
+    sec.appendChild(e);
+  }
+  const unsch=open.filter(t=>!t.deadline);
+  if(unsch.length){
+    const h=document.createElement("div");h.className="unschh";h.textContent="No date yet";sec.appendChild(h);
+    const box=document.createElement("div");
+    unsch.forEach(t=>{
+      const room=t.roomIds[0]?roomById(t.roomIds[0]):null;
+      const s=document.createElement("span");s.className="uchip";
+      s.innerHTML=`<span class="ndot" style="background:${room?room.dot:"#B29A62"}"></span>${esc(t.t)}`;
+      box.appendChild(s);
+    });
+    sec.appendChild(box);
+  }
+  wrap.appendChild(sec);
+}
+/* ---------- notes view */
+function renderNotes(wrap){
+  const grid=document.createElement("div");grid.className="notesgrid";
+  const left=document.createElement("div");left.className="cat";
+  left.innerHTML=`<h3 style="margin:0 0 4px;font-size:15px;display:flex">📓 Brain dump</h3>
+    <div class="sub" style="margin-bottom:10px">Empty your head here — one thought per line. Nothing is a commitment yet.</div>
+    <textarea class="dumpta" placeholder="everything on your mind…">${esc(state.dump)}</textarea>
+    <div id="dumplines"></div>`;
+  const ta=left.querySelector(".dumpta");
+  const linesBox=left.querySelector("#dumplines");
+  const renderLines=()=>{
+    linesBox.innerHTML="";
+    const lines=state.dump.split("\n").map(l=>l.trim()).filter(Boolean);
+    if(!lines.length)return;
+    const head=document.createElement("div");head.className="lnhead";
+    const opts=state.rooms.map(r=>`<option value="${r.id}" ${ (ui.notesRoom||state.rooms[0]&&state.rooms[0].id)===r.id?"selected":""}>${esc(r.name)}</option>`).join("");
+    head.innerHTML=`<div class="detlabel">Turn a line into a task</div><label style="font-size:11px;color:var(--muted);font-weight:700">into room <select>${opts}</select></label>`;
+    head.querySelector("select").onchange=e=>{ui.notesRoom=e.target.value;};
+    linesBox.appendChild(head);
+    lines.forEach(line=>{
+      const row=document.createElement("div");row.className="lnrow";
+      row.innerHTML=`<span class="lt">${esc(line)}</span><button class="mkbtn">→ task</button>`;
+      row.querySelector(".mkbtn").onclick=()=>{
+        const roomId=ui.notesRoom||(state.rooms[0]&&state.rooms[0].id);
+        if(!roomId)return;
+        let removed=false;
+        state.dump=state.dump.split("\n").filter(l=>{if(!removed&&l.trim()===line){removed=true;return false;}return true;}).join("\n");
+        addTaskTo(roomId,line);
+        const room=roomById(roomId);
+        toast("Moved into “"+(room?room.name:"the house")+"” as a task 🛠️");
+      };
+      linesBox.appendChild(row);
+    });
+  };
+  ta.oninput=()=>{state.dump=ta.value;save();renderLines();};
+  renderLines();
+  const right=document.createElement("div");right.className="helpcard";
+  right.innerHTML=`<h3>Breaking it down</h3>
+    <div class="hp">A thought becomes doable when it's one small action. For each line, ask yourself:</div>
+    <div class="hq">1 · What's the very first physical action?</div>
+    <div class="hq">2 · Can it be done in one sitting? If not, split it.</div>
+    <div class="hq">3 · Which room of your life does it belong to?</div>
+    <div class="hi">A line you turn into a task moves out of the dump and into the house.</div>`;
+  grid.appendChild(left);grid.appendChild(right);
+  wrap.appendChild(grid);
+}
 function renderTasks(){
   const wrap=document.getElementById("taskContent");wrap.innerHTML="";
-  if(state.view==="next")renderNextView(wrap);else renderRoomsView(wrap);
+  if(state.view==="next")renderNextView(wrap);
+  else if(state.view==="cal")renderCalendar(wrap);
+  else if(state.view==="timeline")renderTimeline(wrap);
+  else if(state.view==="notes")renderNotes(wrap);
+  else renderRoomsView(wrap);
 }
 function renderToggle(){
-  document.getElementById("vRooms").classList.toggle("on",state.view!=="next");
-  document.getElementById("vNext").classList.toggle("on",state.view==="next");
+  const map={rooms:"vRooms",next:"vNext",cal:"vCal",timeline:"vTimeline",notes:"vNotes"};
+  Object.entries(map).forEach(([v,id])=>document.getElementById(id).classList.toggle("on",state.view===v||(v==="rooms"&&!map[state.view])));
 }
-function renderAll(){renderHUD();renderVision();renderHouse();renderGround();renderBricks();renderThree();renderToggle();renderInbox();renderTasks();}
+function renderBanner(){
+  const el=document.getElementById("banner");
+  const energy=state.daily.bricks.filter(Boolean).length/4;
+  if(!ui.bannerDismissed&&energy<0.5&&new Date().getHours()>=15){
+    el.innerHTML=`<div class="banner"><span style="font-size:16px">🧱</span>
+      <span>Your foundations need a little care today — sleep, food, movement, a pause. Lay a brick when you're ready, no rush.</span>
+      <button class="bx">×</button></div>`;
+    el.querySelector(".bx").onclick=()=>{ui.bannerDismissed=true;renderBanner();};
+  }else el.innerHTML="";
+}
+function renderAll(){renderHUD();renderVision();renderHouse();renderGround();renderBricks();renderThree();renderToggle();renderBanner();renderInbox();renderTasks();}
 
 /* ---------- modals */
 const overlay=document.getElementById("overlay"),modal=document.getElementById("modal");
-function openModal(html){modal.innerHTML=html;overlay.classList.add("show");}
-function closeModal(){overlay.classList.remove("show");modal.innerHTML="";}
+function openModal(html,pop){
+  modal.innerHTML=html;
+  modal.classList.toggle("pop",!!pop);
+  overlay.classList.toggle("center",!!pop);
+  overlay.classList.add("show");
+}
+function closeModal(){overlay.classList.remove("show");overlay.classList.remove("center");modal.classList.remove("pop");modal.innerHTML="";}
 overlay.onclick=e=>{if(e.target===overlay)closeModal();};
 
 function tagModal(){
@@ -925,7 +1489,7 @@ function tagModal(){
 function blueprintModal(){
   const themeOpts=sel=>THEME_LIST.map(t=>`<option value="${t}" ${sel===t?"selected":""}>${THEME_LABEL[t]}</option>`).join("");
   let html=`<h2>📐 Blueprint <button class="mx">×</button></h2>
-  <p class="msub">Decide how your house is built: which rooms sit on which floor, and what builds on what. A room whose base room is under 50% shows scaffolding 🚧 until it's ready.</p>`;
+  <p class="msub">Decide how your house is built: which rooms sit on which floor, and what builds on what. A room whose base room is under 50% shows scaffolding 🚧 until it's ready. Wall paint, windows &amp; sky live under each room's 🎨 button.</p>`;
   state.rooms.forEach((r,i)=>{
     const depOpts=`<option value="">— independent —</option>`+state.rooms.filter(x=>x.id!==r.id).map(x=>`<option value="${x.id}" ${r.dependsOn===x.id?"selected":""}>builds on ${esc(x.name)}</option>`).join("");
     html+=`<div class="mrow" data-i="${i}">
@@ -961,8 +1525,162 @@ function blueprintModal(){
   modal.querySelector("#roomAdd").onclick=()=>{
     const presets=[["#EAF2E3","#6A994E"],["#FBEAEA","#BC4749"],["#E7F0F7","#4E7DA6"],["#F6EFE3","#B08968"]];
     const p=presets[state.rooms.length%presets.length];
-    state.rooms.push({id:uid(),name:"New room",wall:p[0],dot:p[1],floor:1,dependsOn:null,theme:"cozy",style:0});
+    state.rooms.push({id:uid(),name:"New room",wall:p[0],dot:p[1],floor:1,dependsOn:null,theme:"cozy",style:0,windows:2,sort:"manual"});
     save();renderAll();blueprintModal();};
+}
+/* ---------- paint / customize modal (per room) */
+const WALL_SWATCHES=["#EDE6D6","#DCE6EE","#E3E9DC","#F2DFD7","#E4E0EC","#F1E6D4"];
+function paintModal(roomId){
+  const lvl=levelFor(xpOf());
+  if(lvl<2){toast("🔒 Room customizing unlocks at level 2 — keep completing tasks!");return;}
+  const r=roomById(roomId);if(!r)return;
+  const winLocked=lvl<3, duskLocked=lvl<6;
+  const dusk=!!state.custom.dusk;
+  let html=`<h2>🎨 Customize “${esc(r.name)}” <button class="mx">×</button></h2>
+  <div class="plabel">Wall paint</div>
+  <div class="swatches">${WALL_SWATCHES.map(c=>`<button data-w="${c}" class="${r.wall.toUpperCase()===c?"on":""}" style="background:${c}"></button>`).join("")}
+    <input type="color" id="wallpick" value="${r.wall}" title="any colour" style="width:40px;height:40px;border:1px solid #E0D5C0;border-radius:10px;background:#fff;padding:2px;cursor:pointer">
+  </div>
+  <div class="plabel">Furniture style</div>
+  <div class="optbtns">${STYLE_NAMES.map((n,i)=>`<button data-s="${i}" class="${(r.style||0)===i?"on":""}">${n}</button>`).join("")}</div>
+  <div class="plabel">Windows <i>${winLocked?"(unlocks at level 3)":""}</i></div>
+  <div class="optbtns">${[1,2,3].map(n=>`<button data-n="${n}" class="${r.windows===n?"on":""}" ${winLocked?"disabled":""}>${n} window${n>1?"s":""}</button>`).join("")}</div>
+  <div class="plabel">Sky — whole house <i>${duskLocked?"(unlocks at level 6)":""}</i></div>
+  <div class="optbtns">
+    <button id="skyDay" class="${!dusk?"on":""}">☀️ Day</button>
+    <button id="skyDusk" class="${dusk?"on":""}" ${duskLocked?"disabled":""}>🌙 Dusk ${duskLocked?"🔒":""}</button>
+  </div>
+  <button class="navybtn" id="paintDone" style="margin-top:20px;width:100%">Done</button>`;
+  openModal(html);
+  modal.querySelector(".mx").onclick=closeModal;
+  modal.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{r.wall=b.dataset.w;save();renderAll();paintModal(roomId);});
+  modal.querySelector("#wallpick").oninput=e=>{r.wall=e.target.value;save();renderHouse();};
+  modal.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{r.style=+b.dataset.s;save();renderAll();paintModal(roomId);});
+  modal.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{if(winLocked)return;r.windows=+b.dataset.n;save();renderAll();paintModal(roomId);});
+  modal.querySelector("#skyDay").onclick=()=>{state.custom.dusk=false;save();renderAll();paintModal(roomId);};
+  modal.querySelector("#skyDusk").onclick=()=>{if(duskLocked)return;state.custom.dusk=true;save();renderAll();paintModal(roomId);};
+  modal.querySelector("#paintDone").onclick=closeModal;
+}
+/* ---------- mailbox: reminders & events */
+function mailboxModal(){
+  const items=[
+    ...state.reminders.map(r=>({kind:"rem",o:r})),
+    ...state.events.map(ev=>({kind:"event",o:ev}))
+  ].sort((a,b)=>(a.o.date||"9999")<(b.o.date||"9999")?-1:1);
+  const d=ui.remDraft;
+  const isRem=d.kind!=="event";
+  let listHtml=items.map(({kind,o},i)=>{
+    const when=o.date?(o.dateEnd&&o.dateEnd>o.date?o.date+" → "+o.dateEnd:o.date+(o.time?" "+o.time:"")):"undated";
+    return `<div class="mailitem ${kind==="rem"?"rem":"ev"}" data-i="${i}">
+      <span style="font-size:13px">${kind==="rem"?"🔔":"🎊"}</span>
+      ${kind==="rem"?`<input type="checkbox" data-a="tog" ${o.d?"checked":""} style="min-width:17px;height:17px;accent-color:#B26A00;cursor:pointer">`:""}
+      <span class="mt ${o.d?"done":""}">${esc(o.t)}</span>
+      <span class="mwhen">${when}</span>
+      <button class="del" data-a="del">×</button>
+    </div>`;
+  }).join("");
+  if(!items.length)listHtml=`<div style="text-align:center;font-size:12px;color:#B9B2A2;padding:12px">The mailbox is empty.</div>`;
+  openModal(`<h2>📬 The mailbox <button class="mx">×</button></h2>
+  <p class="msub">Reminders and events aren't tasks — no furniture, no pressure. Reminders wait in the mailbox; events hang a garland 🎊 on the house for the day. Both show on the calendar.</p>
+  <div class="maillist">${listHtml}</div>
+  <div class="seg" style="margin-top:12px;width:fit-content">
+    <button id="kRem" class="${isRem?"on":""}">🔔 Reminder</button>
+    <button id="kEv" class="${!isRem?"on":""}">🎊 Event</button>
+  </div>
+  <div class="mailform">
+    <input type="text" id="mT" value="${esc(d.t)}" placeholder="${isRem?"e.g. gym membership expires — decide":"e.g. holiday at the lake"}">
+    <input type="date" id="mD" value="${d.date}">
+    ${isRem?`<input type="time" id="mTi" value="${d.time}">`
+           :`<span class="until">until</span><input type="date" id="mDe" value="${d.dateEnd}" title="end date (optional)">`}
+    <button class="navybtn" id="mAdd" style="background:#243A22">Add</button>
+  </div>`);
+  modal.querySelector(".mx").onclick=closeModal;
+  modal.querySelectorAll(".mailitem").forEach(el=>{
+    const it=items[+el.dataset.i];
+    const tog=el.querySelector('[data-a="tog"]');
+    if(tog)tog.onchange=()=>{it.o.d=tog.checked;save();renderHUD();renderTasks();mailboxModal();};
+    el.querySelector('[data-a="del"]').onclick=()=>{
+      if(it.kind==="rem")state.reminders=state.reminders.filter(x=>x.id!==it.o.id);
+      else state.events=state.events.filter(x=>x.id!==it.o.id);
+      save();renderHUD();renderTasks();mailboxModal();};
+  });
+  modal.querySelector("#kRem").onclick=()=>{grabDraft();ui.remDraft.kind="rem";mailboxModal();};
+  modal.querySelector("#kEv").onclick=()=>{grabDraft();ui.remDraft.kind="event";mailboxModal();};
+  function grabDraft(){
+    ui.remDraft.t=modal.querySelector("#mT").value;
+    ui.remDraft.date=modal.querySelector("#mD").value;
+    const ti=modal.querySelector("#mTi");if(ti)ui.remDraft.time=ti.value;
+    const de=modal.querySelector("#mDe");if(de)ui.remDraft.dateEnd=de.value;
+  }
+  modal.querySelector("#mAdd").onclick=()=>{
+    grabDraft();
+    const dr=ui.remDraft;
+    if(!dr.t.trim()){toast("Give it a few words first ✏️");return;}
+    if(dr.kind==="event"){
+      let end=dr.dateEnd||"";
+      if(end&&dr.date&&end<dr.date)end="";
+      state.events.push({id:uid(),t:dr.t.trim(),date:dr.date,dateEnd:end});
+      toast("Event added — the house will hang a garland that day 🎊");
+    }else{
+      state.reminders.push({id:uid(),t:dr.t.trim(),date:dr.date,time:dr.time,d:false});
+      toast("Dropped in the mailbox 📬");
+    }
+    ui.remDraft={t:"",date:"",dateEnd:"",time:"",kind:dr.kind};
+    save();renderHUD();renderTasks();mailboxModal();
+  };
+  modal.querySelector("#mT").onkeydown=e=>{if(e.key==="Enter")modal.querySelector("#mAdd").click();};
+}
+/* ---------- level-up celebration */
+function levelUpModal(lvl){
+  openModal(`<div style="font-size:40px">🏡</div>
+  <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:24px;color:var(--navy);margin-top:4px">Level ${lvl}!</div>
+  <div style="font-size:13px;color:#5F6C82;margin-top:8px;line-height:1.5">Your steady building paid off. The house — and you — just grew a little.</div>
+  <div style="background:var(--sand);border-radius:12px;padding:10px 14px;margin-top:14px;font-size:13px;font-weight:700;color:var(--green)">🔓 ${esc(UNLOCKS[lvl]||"You're deep in the endgame — keep balancing it out.")}</div>
+  <button class="bigbtn" id="luOk" style="margin-top:18px">Keep building</button>`,true);
+  modal.querySelector("#luOk").onclick=closeModal;
+}
+/* ---------- reflection (safe space, never required) */
+function reflectionModal(tk,q,sub){
+  openModal(`<div style="font-size:26px;text-align:left">🕯️</div>
+  <div style="font-family:'Baloo 2',sans-serif;font-weight:700;font-size:19px;color:var(--navy);margin-top:6px;text-align:left">${esc(q)}</div>
+  <div style="font-size:13px;color:#5F6C82;margin-top:8px;line-height:1.55;text-align:left">${esc(sub)}</div>
+  <textarea id="reflNote" placeholder="A thought, just for you — totally optional." style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:13px;min-height:64px;resize:vertical;margin-top:12px;background:#fff;color:var(--ink);outline:none;font-family:inherit"></textarea>
+  <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+    <button class="ghostbtn" id="reflSkip">No answer needed</button>
+    <button class="navybtn" id="reflSave">Keep this thought</button>
+  </div>`,true);
+  modal.querySelector("#reflSkip").onclick=closeModal;
+  modal.querySelector("#reflSave").onclick=()=>{
+    const note=modal.querySelector("#reflNote").value.trim();
+    if(note){tk.details=(tk.details?tk.details+"\n":"")+"💭 "+note;save();renderTasks();toast("Saved to the task's details — just for you 💭");}
+    closeModal();
+  };
+}
+/* ---------- guide tour */
+const GUIDE_STEPS=[
+  {icon:"🏠",title:"Welcome to your Balance House",body:"Every task you complete becomes a piece of furniture. Every daily basic — sleep, food, movement, connection — is a brick in your foundation. Watch your house come to life as you do.",btn:"Show me"},
+  {icon:"🛋️",title:"Rooms are your life areas",body:"Each room holds the tasks of one area — work, health, dreams. Complete a task and furniture drops in. Use 📐 Blueprint to add rooms, set floors, and decide what builds on what.",btn:"Next"},
+  {icon:"🧱",title:"The foundation keeps you standing",body:"Four bricks, every day — yours to define: sleep, eating, movement, a pause. They fill your energy battery. Productivity means nothing on an empty battery.",btn:"Next"},
+  {icon:"📅",title:"The calendar bends, not you",body:"Month, week and timeline views — drag a task to another day to move it. If something keeps sliding, the house gently asks why. You never have to answer.",btn:"Next"},
+  {icon:"🔓",title:"Level up, make it yours",body:"Tasks, finished rooms and streaks earn XP. Each level unlocks a way to customize: wall paint, windows, garden, a pet, the evening sky. Your house, your pace.",btn:"Start building"}
+];
+function guideShow(i){
+  const g=GUIDE_STEPS[i];
+  const logoSrc=document.querySelector(".logo").src;
+  openModal(`<img src="${logoSrc}" alt="Balance it out" style="height:64px;border-radius:12px">
+  <div style="font-size:36px;margin-top:8px">${g.icon}</div>
+  <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:21px;color:var(--navy);margin-top:4px">${g.title}</div>
+  <div style="font-size:14px;color:#5F6C82;margin-top:10px;line-height:1.6">${g.body}</div>
+  <div class="gdots">${GUIDE_STEPS.map((_,k)=>`<span style="background:${k===i?"var(--red)":"#E0D5C0"}"></span>`).join("")}</div>
+  <div style="display:flex;gap:10px;margin-top:18px;justify-content:center;align-items:center">
+    <button class="ghostbtn" id="gSkip">Skip</button>
+    <button class="bigbtn" id="gNext">${g.btn}</button>
+  </div>`,true);
+  modal.querySelector("#gSkip").onclick=closeModal;
+  modal.querySelector("#gNext").onclick=()=>{
+    if(i>=GUIDE_STEPS.length-1){closeModal();bigBurst();}
+    else guideShow(i+1);
+  };
 }
 function backupLabel(json){
   try{const s=JSON.parse(json);return `${(s.tasks||[]).length} tasks · ${(s.tasks||[]).filter(t=>t.d).length} done · ${(s.rooms||[]).length} rooms`;}
@@ -979,12 +1697,14 @@ function helpModal(){
   let bkHtml=backups.length?backups.map(k=>`<button class="mini" data-bk="${k}">↩ ${k.slice(BK_PREFIX.length)} — ${backupLabel(localStorage.getItem(k))}</button>`).join(" "):"<i>none yet on this device</i>";
   openModal(`<h2>⚙ More <button class="mx">×</button></h2>
   <h3>How the house works</h3>
-  <p>🧱 <b>Foundation bricks</b> are your wellbeing — tap them daily; they power your 🔋 energy.
+  <p>🧱 <b>Foundation bricks</b> are your wellbeing — tap them daily; they power your energy.
   🛋 Finishing a task drops real furniture into its room. 🪟 A fully-built room lights up.
   🚧 Rooms can build on other rooms (set it in Blueprint) — scaffolding shows until the base room is 50% built.
-  🔥 Finish all three Today-tasks to grow your streak; flowers bloom outside as it grows.</p>
-  <h3>Google Calendar → house</h3>
-  <p>In Google Calendar: <b>Settings → Import &amp; export → Export</b> (or a single calendar's "Integrate" section) to download an <b>.ics</b> file, then tap <b>📅 Import calendar</b> in the Inbox here and pick that file. Events arrive as Inbox tasks with their date as deadline — you sort them into rooms.</p>
+  🔥 Finish all three Today-tasks to grow your streak; flowers bloom outside as it grows.
+  📬 The mailbox holds reminders &amp; events — they show on the 📅 calendar, and events hang a garland 🎊 on the house.
+  🔓 Tasks, finished rooms and streaks earn XP; levels unlock customizations under each room's 🎨 button.</p>
+  <h3>Import from any calendar</h3>
+  <p>Google Calendar, Samsung Calendar, Outlook, Apple Calendar — they can all export an <b>.ics</b> file (look for Export or Share, e.g. Google: <b>Settings → Import &amp; export → Export</b>). Tap <b>📅 Import calendar</b> in the Inbox here and pick that file. Events arrive as Inbox tasks with their date as deadline — you sort them into rooms.</p>
   <h3>Your data</h3>
   <p>Signed in, every change saves to the cloud automatically (watch the ☁ chip by your name). Each device also keeps 7 local daily backups, and your account keeps 14 daily <b>cloud backups</b> that work from any device. <b>export</b> (bottom of page) downloads a file copy any time.</p>
   <p>Backups on this device: ${bkHtml}</p>
@@ -1039,7 +1759,9 @@ document.getElementById("icsFile").onchange=e=>{
     let added=0;
     events.forEach(ev=>{
       if(state.tasks.some(t=>t.t===ev.t&&t.deadline===(ev.deadline||"")))return;
-      state.tasks.push({id:uid(),t:ev.t,tagId:state.tags[0].id,deadline:ev.deadline||"",d:false,roomIds:[]});
+      const order=Math.max(-1,...state.tasks.map(t=>t.order))+1+added;
+      state.tasks.push({id:uid(),t:ev.t,tagId:state.tags[0].id,deadline:ev.deadline||"",d:false,roomIds:[],
+        details:"",need:"",blocker:"",collab:"",moves:0,order,dependsOn:null,milestone:false});
       added++;
     });
     save();renderAll();
@@ -1115,10 +1837,9 @@ function onboardNewUser(){
   openModal(`<div class="onbox">
     <h2 style="justify-content:center">🏡 Welcome to Balance House</h2>
     <p class="msub">One question before you start building.</p>
-    <p style="font-size:15px;font-weight:800;color:var(--pine);margin-top:14px">What is your ultimate goal — the big project you're working on?</p>
+    <p style="font-size:15px;font-weight:800;color:var(--navy);margin-top:14px">What is your ultimate goal — the big project you're working on?</p>
     <input id="goalInput" type="text" maxlength="60" placeholder="e.g. Launch my own business">
-    <p class="msub">Your answer becomes the roof of your house. Everything you build below holds it up.
-    Then rename the starter rooms (📐 Blueprint), add your tasks, and lay your first foundation brick.</p>
+    <p class="msub">Your answer becomes the roof of your house. Everything you build below holds it up.</p>
     <button class="go" id="goalGo">Raise the roof 🏠</button>
     <p style="margin-top:12px;font-size:12px;color:var(--muted)">Already built a house? <button class="signout" id="goalSignin">Sign in with Google</button> and it comes right back.</p>
   </div>`);
@@ -1128,7 +1849,8 @@ function onboardNewUser(){
     if(v2)state.why.h=v2;
     state.onboarded=true;
     save();renderAll();closeModal();
-    toast("Welcome home 🏡 add a task, finish it, and your first furniture appears");confetti();
+    confetti();
+    guideShow(0);
   };
   document.getElementById("goalGo").onclick=commit;
   document.getElementById("goalInput").onkeydown=e=>{if(e.key==="Enter")commit();};
@@ -1148,11 +1870,16 @@ window.__bh={get state(){return state;},set state(s){state=s;},normalize,rollove
 
 /* ---------- top-level wiring */
 document.getElementById("editBricks").onclick=brickModal;
-document.getElementById("vRooms").onclick=()=>{state.view="rooms";save();renderToggle();renderTasks();};
-document.getElementById("vNext").onclick=()=>{state.view="next";save();renderToggle();renderTasks();};
+document.getElementById("vRooms").onclick=()=>{state.view="rooms";save();renderToggle();renderInbox();renderTasks();};
+document.getElementById("vNext").onclick=()=>{state.view="next";save();renderToggle();renderInbox();renderTasks();};
+document.getElementById("vCal").onclick=()=>{state.view="cal";save();renderToggle();renderInbox();renderTasks();};
+document.getElementById("vTimeline").onclick=()=>{state.view="timeline";save();renderToggle();renderInbox();renderTasks();};
+document.getElementById("vNotes").onclick=()=>{state.view="notes";save();renderToggle();renderInbox();renderTasks();};
 document.getElementById("btnTags").onclick=tagModal;
 document.getElementById("btnBlueprint").onclick=blueprintModal;
 document.getElementById("btnHelp").onclick=helpModal;
+document.getElementById("btnMail").onclick=mailboxModal;
+document.getElementById("btnGuide").onclick=()=>guideShow(0);
 document.getElementById("suggest").onclick=()=>{
   const tagOrder=id=>state.tags.findIndex(g=>g.id===id);
   const u=state.tasks.filter(t=>!t.d);
@@ -1166,6 +1893,10 @@ load();
 renderAll();
 /* brand-new visitor: ask the goal question before anything else */
 if(!state.onboarded)onboardNewUser();
+/* gentle afternoon nudge once per session if the foundation is running low */
+else if(state.daily.bricks.filter(Boolean).length<2&&new Date().getHours()>=12){
+  setTimeout(()=>toast("🧱 Gentle nudge: your foundation bricks are waiting — sleep, food, movement, a pause."),1800);
+}
 /* midnight rollover check while the tab stays open (housekeeping — claims no new edits) */
 setInterval(()=>{if(state.daily.date!==todayISO()){rollover();saveQuiet();renderAll();}},60000);
 </script>
