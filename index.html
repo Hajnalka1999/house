@@ -305,6 +305,72 @@
   .confetti{position:fixed;width:9px;height:9px;z-index:90;pointer-events:none;border-radius:2px;animation:cfall 1.1s ease-in forwards}
   @keyframes cfall{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--cx),var(--cy)) rotate(540deg);opacity:0}}
 
+  /* ---- storm day ---- */
+  .stormbtn{background:none;border:1.5px solid rgba(255,255,255,.35);color:#C9D4E4;border-radius:16px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+  .stormbtn:hover{border-color:var(--glow);color:var(--glow)}
+  .stormlayer{position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:0 0 6px 6px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(70,90,110,.28),rgba(70,90,110,.16));display:none}
+  .storm .stormlayer{display:block}
+  .stormlayer::before{content:"";position:absolute;inset:-100% 0 0 0;
+    background-image:repeating-linear-gradient(75deg,transparent 0 11px,rgba(210,228,240,.5) 11px 12px);
+    animation:rainfall .7s linear infinite}
+  @keyframes rainfall{0%{transform:translateY(0)}100%{transform:translateY(24px)}}
+  .house{position:relative}
+  .cozycard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 20px;text-align:center}
+  .cozycard .big{font-size:34px;margin-bottom:8px}
+  .cozycard h3{margin:0 0 6px;color:var(--navy);font-size:17px}
+  .cozycard p{margin:0 auto 14px;font-size:13.5px;color:var(--muted);max-width:420px;line-height:1.6}
+  .cozycard button{background:var(--navy);color:#fff;border:none;border-radius:20px;padding:9px 20px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
+
+  /* ---- cocktail bar ---- */
+  .barcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-top:14px}
+  .barcard .bhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+  .barcard h3{margin:0;font-size:15px;color:var(--navy)}
+  .barcard .bsub{font-size:11.5px;color:var(--muted);margin-bottom:10px}
+  .barrow{display:flex;gap:12px;align-items:flex-end}
+  .glasswrap{flex:none;text-align:center}
+  .glasswrap .glabel{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.5px;margin-top:3px}
+  .pourgrid{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px}
+  .pourbtn{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:7px 4px 6px;cursor:pointer;font-family:inherit;text-align:center;transition:.12s;position:relative}
+  .pourbtn:hover{border-color:var(--green);transform:translateY(-1px)}
+  .pourbtn .pi{font-size:17px;display:block}
+  .pourbtn .pl{font-size:10px;font-weight:700;color:var(--ink);display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pourbtn .pc{position:absolute;top:-6px;right:-5px;background:var(--navy);color:#fff;font-size:9.5px;font-weight:800;border-radius:9px;min-width:17px;padding:1.5px 4px}
+  .weekglasses{display:flex;gap:5px;align-items:flex-end;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+  .wgday{text-align:center;flex:1;cursor:pointer;border-radius:8px;padding:3px 1px}
+  .wgday:hover{background:var(--sand)}
+  .wgday.today{background:#FFF3D6}
+  .wgday .wd{font-size:9px;font-weight:800;color:var(--muted)}
+  .mixhint{margin-top:9px;font-size:11.5px;color:#8A6310;background:#FFF9E9;border:1px solid #EAD9A8;border-radius:9px;padding:6px 10px}
+  .mixhint.good{color:#1F6048;background:#E1F1EA;border-color:#BBDCCB}
+
+  /* ---- week strip ---- */
+  .weekstrip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:12px}
+  .weekstrip .whead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .weekstrip h3{margin:0;font-size:14px;color:var(--navy)}
+  .wnav{display:flex;gap:4px;align-items:center}
+  .wnav button{background:var(--sand);border:1px solid var(--line);border-radius:7px;font-size:12px;padding:2px 9px;cursor:pointer;font-family:inherit;color:var(--navy);font-weight:700}
+  .wnav .wlabel{font-size:11px;color:var(--muted);font-weight:700;padding:0 4px}
+  .wcols{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .wcol{border:1px solid var(--line);border-radius:9px;padding:5px 3px 6px;text-align:center;cursor:pointer;background:#fff;min-height:86px;transition:.12s}
+  .wcol:hover{border-color:var(--green)}
+  .wcol.today{border-color:var(--amber);background:#FFFBEF;box-shadow:0 0 0 2px var(--glow)}
+  .wcol .dn{font-size:9.5px;font-weight:800;color:var(--muted);text-transform:uppercase}
+  .wcol .dt{font-size:12px;font-weight:800;color:var(--ink)}
+  .wcol .shifts{display:flex;flex-direction:column;gap:2px;margin:4px 2px}
+  .wcol .shift{font-size:8.5px;font-weight:800;color:#fff;border-radius:4px;padding:2px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wcol .heavy{font-size:9px;margin-top:2px}
+  .wsub{font-size:10.5px;color:var(--muted);margin-top:7px}
+  .mixrow{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px dashed var(--line)}
+  .mixrow:first-child{border-top:none}
+  .mixrow .mi{font-size:17px;width:24px;text-align:center}
+  .mixrow .ml{flex:1;font-size:13.5px;font-weight:600}
+  .mixrow .step{display:flex;gap:6px;align-items:center}
+  .mixrow .step button{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-size:15px;cursor:pointer;color:var(--navy);font-weight:800}
+  .mixrow .step button:hover{border-color:var(--green)}
+  .mixrow .cnt{min-width:20px;text-align:center;font-weight:800;font-size:14px}
+
+
   /* auth bar */
   .authbar{display:flex;align-items:center;gap:8px}
   .gbtn{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.08)}
@@ -374,12 +440,15 @@
           <div class="baselabel">Foundation — lay a brick for each, daily</div>
           <div class="bricks" id="bricks"></div>
         </div>
+        <div class="stormlayer"></div>
       </div>
       <div class="ground"><svg id="groundsvg" viewBox="0 0 440 46" preserveAspectRatio="none"></svg></div>
 
+      <div class="barcard" id="barcard"></div>
+
       <div class="today">
-        <div class="row"><h3>Today, you furnish three</h3><span class="dayname" id="dayname"></span><button class="sg" id="suggest">Suggest 3 ✨</button></div>
-        <p>Drag a task in from the right — or tap ↑Today. It stays until you tick it done.</p>
+        <div class="row"><h3>Today, you furnish three</h3><span class="dayname" id="dayname"></span><span style="display:flex;gap:6px;align-items:center"><button class="stormbtn" id="stormBtn" title="One tap: everything can wait until tomorrow">⛈ Storm day</button><button class="sg" id="suggest">Suggest 3 ✨</button></span></div>
+        <p id="todayHint">Drag a task in from the right — or tap ↑Today. It stays until you tick it done.</p>
         <div id="three"></div>
       </div>
     </div>
@@ -398,13 +467,14 @@
         <button class="tool" id="btnBlueprint">📐 Blueprint</button>
         <button class="tool" id="btnHelp">⚙ More</button>
       </div>
+      <div id="weekStrip"></div>
       <div id="inboxWrap"></div>
       <div id="taskContent"></div>
     </div>
   </div>
 
   <div class="foot">
-    Saves on this device automatically · daily backups kept ·
+    <span id="backupInfo">Saves on this device automatically · daily backups kept</span> ·
     <button id="btnExport">export</button>·<button id="btnImport">import</button>·<button id="reset">reset house</button>
     <input type="file" id="importFile" accept=".json" style="display:none">
     <input type="file" id="icsFile" accept=".ics,text/calendar" style="display:none">
@@ -532,6 +602,16 @@ function defaultBricks(){return [
   {icon:"🏃",label:"Moved",color:"#B5613E"},
   {icon:"🫂",label:"Connected",color:"#B5613E"},
 ];}
+/* cocktail ingredients: what a good week is mixed from.
+   kind 'work' = fills the day's capacity (renders as shifts in the week strip);
+   kind 'life' = the sweetness. dose = pours per WEEK (never per day — days are allowed to be lopsided). */
+function defaultIngredients(){return [
+  {id:"work",label:"Main work",icon:"💼",color:"#4E7DA6",dose:5,kind:"work"},
+  {id:"admin",label:"Admin",icon:"🗂️",color:"#D9A53A",dose:2,kind:"work"},
+  {id:"friends",label:"Friends & connection",icon:"🫂",color:"#C77B53",dose:3,kind:"life"},
+  {id:"nature",label:"Nature",icon:"🌿",color:"#3E8E7E",dose:3,kind:"life"},
+  {id:"selftime",label:"Self-time",icon:"📖",color:"#7C74C9",dose:3,kind:"life"},
+];}
 
 /* ---------- persistence */
 let state=null;
@@ -591,6 +671,13 @@ function normalize(){
   if(!state.lastLevel)state.lastLevel=1;
   if(!state.why)state.why=seedState().why;
   if(typeof state.rev!=="number")state.rev=0;
+  if(!Array.isArray(state.ingredients)||!state.ingredients.length)state.ingredients=defaultIngredients();
+  state.ingredients.forEach(g=>{if(!g.id)g.id=uid();if(!g.icon)g.icon="🧉";if(!g.color)g.color="#3E8E7E";if(!g.dose)g.dose=3;if(g.kind!=="work"&&g.kind!=="life")g.kind="life";});
+  if(typeof state.pours!=="object"||!state.pours)state.pours={};
+  if(state.daily.storm===undefined)state.daily.storm=false;
+  if(state.daily.nagged===undefined)state.daily.nagged=false;
+  if(state.lastStorm===undefined)state.lastStorm="";
+
   if(!Array.isArray(state.bricksDef)||state.bricksDef.length!==4)state.bricksDef=defaultBricks();
   state.bricksDef.forEach(b=>{if(!b.icon)b.icon="🧱";if(!b.label)b.label="Brick";if(!b.color)b.color="#B5613E";});
   if(state.onboarded===undefined)state.onboarded=true;
@@ -605,8 +692,12 @@ function normalize(){
 }
 function rollover(){
   if(state.daily.date===todayISO())return;
-  state.daily={date:todayISO(),bricks:[false,false,false,false],three:[{taskId:null,text:"",d:false},{taskId:null,text:"",d:false},{taskId:null,text:"",d:false}]};
-  if(state.streak.last&&state.streak.last!==todayISO()&&state.streak.last!==yesterISO())state.streak.n=0;
+  state.daily={date:todayISO(),bricks:[false,false,false,false],storm:false,nagged:false,
+    three:[{taskId:null,text:"",d:false},{taskId:null,text:"",d:false},{taskId:null,text:"",d:false}]};
+  if(state.streak.last&&state.streak.last!==todayISO()&&state.streak.last!==yesterISO()){
+    /* storm days freeze the streak — rest is maintenance, not failure */
+    if(!(state.lastStorm&&state.lastStorm>=state.streak.last))state.streak.n=0;
+  }
 }
 function backup(){
   try{
@@ -920,7 +1011,189 @@ function brickModal(){
     };
   });
 }
+/* ---------- cocktail bar: the week is a drink; ingredients are what it's mixed from */
+const DAY_CAP=6; /* pours that visually fill one day's glass */
+function dateAddISO(iso,days){const d=new Date(iso+"T12:00");d.setDate(d.getDate()+days);return localISO(d);}
+function weekDates(offset){ /* Mon-Sun of current week + offset weeks */
+  const t=new Date();const dow=(t.getDay()+6)%7;t.setDate(t.getDate()-dow+offset*7);
+  return Array.from({length:7},(_,i)=>{const d=new Date(t);d.setDate(t.getDate()+i);return localISO(d);});
+}
+function poursOf(date){return state.pours[date]||{};}
+function setPour(date,ingId,n){
+  if(!state.pours[date])state.pours[date]={};
+  if(n<=0)delete state.pours[date][ingId];else state.pours[date][ingId]=n;
+  if(!Object.keys(state.pours[date]).length)delete state.pours[date];
+  save();
+}
+function workLoad(date){
+  const p=poursOf(date);let n=0;
+  state.ingredients.forEach(g=>{if(g.kind==="work")n+=p[g.id]||0;});
+  return n;
+}
+function ingById(id){return state.ingredients.find(g=>g.id===id);}
+function glassSVG(mix,w,h){
+  const total=Object.values(mix).reduce((a,b)=>a+b,0);
+  const cap=Math.max(DAY_CAP,total);
+  const gx=w*0.18,gw=w*0.64,gy=h*0.06,gh=h*0.78;
+  let layers="",y=gy+gh;
+  state.ingredients.forEach(g=>{
+    const n=mix[g.id]||0;if(!n)return;
+    const lh=gh*(n/cap);y-=lh;
+    layers+=`<rect x="${gx+2}" y="${y}" width="${gw-4}" height="${lh}" fill="${g.color}" opacity=".85"/>`;
+  });
+  const straw=total>0?`<line x1="${gx+gw-6}" y1="${gy-h*0.05}" x2="${gx+gw*0.55}" y2="${gy+gh*0.5}" stroke="#C77B53" stroke-width="${Math.max(1.5,w*0.045)}" stroke-linecap="round"/>`:"";
+  const mint=total>=DAY_CAP*0.5?`<circle cx="${gx+7}" cy="${gy+3}" r="${w*0.06}" fill="#3E8E7E"/><circle cx="${gx+13}" cy="${gy-1}" r="${w*0.05}" fill="#4FA98F"/>`:"";
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    ${straw}
+    <path d="M${gx} ${gy} L${gx+gw*0.12} ${gy+gh} Q${gx+gw*0.5} ${gy+gh+w*0.08} ${gx+gw-gw*0.12} ${gy+gh} L${gx+gw} ${gy} Z" fill="#EAF4F7" opacity=".55"/>
+    ${layers}
+    <path d="M${gx} ${gy} L${gx+gw*0.12} ${gy+gh} Q${gx+gw*0.5} ${gy+gh+w*0.08} ${gx+gw-gw*0.12} ${gy+gh} L${gx+gw} ${gy} Z" fill="none" stroke="#8FA3AD" stroke-width="1.4"/>
+    <line x1="${gx-3}" y1="${gy}" x2="${gx+gw+3}" y2="${gy}" stroke="#8FA3AD" stroke-width="1.4"/>
+    ${mint}
+  </svg>`;
+}
+function weekMix(offset){
+  const mix={};weekDates(offset).forEach(d=>{const p=poursOf(d);Object.keys(p).forEach(k=>mix[k]=(mix[k]||0)+p[k]);});
+  return mix;
+}
+function renderCocktail(){
+  const card=document.getElementById("barcard");if(!card)return;
+  const today=todayISO();
+  const todayMix=poursOf(today);
+  const wm=weekMix(0);
+  const dow=(new Date().getDay()+6)%7;
+  const missing=state.ingredients.filter(g=>g.kind==="life"&&(wm[g.id]||0)<g.dose/2);
+  const lifeOk=state.ingredients.filter(g=>g.kind==="life").every(g=>(wm[g.id]||0)>=g.dose/2);
+  let hint="";
+  if(lifeOk&&Object.keys(wm).length)hint=`<div class="mixhint good">This week's mix tastes right 🍹 — the sweetness is in.</div>`;
+  else if(dow>=3&&missing.length)hint=`<div class="mixhint">This week's mix could still use a splash of ${missing.map(g=>g.icon+" "+esc(g.label)).join(" · ")} — no rush, the week isn't over.</div>`;
+  let pourBtns="";
+  state.ingredients.forEach(g=>{
+    const n=todayMix[g.id]||0;
+    pourBtns+=`<button class="pourbtn" data-pour="${g.id}" title="pour a splash of ${esc(g.label)}">
+      ${n?`<span class="pc">${n}</span>`:""}<span class="pi">${esc(g.icon)}</span><span class="pl">${esc(g.label)}</span></button>`;
+  });
+  let wg="";
+  const wd=weekDates(0);
+  const names=["M","T","W","T","F","S","S"];
+  wd.forEach((d,i)=>{
+    wg+=`<div class="wgday ${d===today?"today":""}" data-day="${d}" title="tap to edit this day's mix">${glassSVG(poursOf(d),26,34)}<div class="wd">${names[i]}</div></div>`;
+  });
+  card.innerHTML=`<div class="bhead"><h3>🍹 The mix</h3><button class="hidebtn" id="ingEdit">✎ ingredients</button></div>
+    <div class="bsub">Tap what today contained — after it happened is fine. Nothing here needs scheduling.</div>
+    <div class="barrow">
+      <div class="glasswrap">${glassSVG(todayMix,54,74)}<div class="glabel">TODAY</div></div>
+      <div class="pourgrid">${pourBtns}</div>
+    </div>
+    <div class="weekglasses">${wg}</div>
+    ${hint}`;
+  card.querySelectorAll("[data-pour]").forEach(b=>b.onclick=()=>{
+    const g=ingById(b.dataset.pour);if(!g)return;
+    setPour(today,g.id,(poursOf(today)[g.id]||0)+1);    renderCocktail();renderWeekStrip();renderThree();
+    toast("+1 "+g.icon+" "+g.label+" poured");
+  });
+  card.querySelectorAll("[data-day]").forEach(el=>el.onclick=()=>dayMixModal(el.dataset.day));
+  const ie=card.querySelector("#ingEdit");if(ie)ie.onclick=ingredientsModal;
+}
+function dayMixModal(date){
+  const d=new Date(date+"T12:00");
+  const label=d.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"short"});
+  let rows="";
+  state.ingredients.forEach(g=>{
+    rows+=`<div class="mixrow" data-i="${g.id}"><span class="mi">${esc(g.icon)}</span><span class="ml">${esc(g.label)}${g.kind==="work"?' <span style="font-size:9px;color:var(--muted)">(fills the day)</span>':""}</span>
+      <span class="step"><button data-a="minus">−</button><span class="cnt">${poursOf(date)[g.id]||0}</span><button data-a="plus">+</button></span></div>`;
+  });
+  openModal(`<h2>🍹 ${esc(label)} <button class="mx">×</button></h2>
+    <p class="msub">What did (or will) this day contain? Work pours fill the glass — a full glass means the day honestly has no room left, and that's information, not failure.</p>
+    ${rows}
+    <div class="note">Tip: mark your hostel / tour shifts here in advance (2–3 pours each) — the week strip turns them into blocks so you can SEE where your time already went.</div>`);
+  modal.querySelector(".mx").onclick=()=>{closeModal();renderCocktail();renderWeekStrip();renderThree();};
+  modal.querySelectorAll(".mixrow").forEach(row=>{
+    const id=row.dataset.i;
+    row.querySelector('[data-a="plus"]').onclick=()=>{setPour(date,id,(poursOf(date)[id]||0)+1);row.querySelector(".cnt").textContent=poursOf(date)[id]||0;};
+    row.querySelector('[data-a="minus"]').onclick=()=>{setPour(date,id,(poursOf(date)[id]||0)-1);row.querySelector(".cnt").textContent=poursOf(date)[id]||0;};
+  });
+}
+function ingredientsModal(){
+  let html=`<h2>🍹 Ingredients <button class="mx">×</button></h2>
+  <p class="msub">What does a good week taste like for you? Doses are per <b>week</b> — single days are allowed to be lopsided. "Fills the day" = paid work / shifts that eat time.</p>`;
+  state.ingredients.forEach((g,i)=>{
+    html+=`<div class="mrow" data-i="${i}">
+      <button class="mini ing-emoji" style="font-size:16px">${esc(g.icon)}</button>
+      <input type="color" value="${g.color}" data-k="color">
+      <input type="text" value="${esc(g.label)}" data-k="label" maxlength="22">
+      <select data-k="dose">${[1,2,3,4,5,6,7,10,14].map(n=>`<option value="${n}" ${g.dose===n?"selected":""}>${n}×/wk</option>`).join("")}</select>
+      <select data-k="kind"><option value="life" ${g.kind==="life"?"selected":""}>sweetness</option><option value="work" ${g.kind==="work"?"selected":""}>fills the day</option></select>
+      <button class="mini" data-a="del" ${state.ingredients.length<=2?"disabled":""}>🗑</button>
+      <span class="egwrap" style="width:100%"></span>
+    </div>`;
+  });
+  html+=`<button class="maddbtn" id="ingAdd">+ add an ingredient (e.g. Hostel shifts, Tour guiding)</button>`;
+  openModal(html);
+  modal.querySelector(".mx").onclick=()=>{closeModal();renderCocktail();renderWeekStrip();renderThree();};
+  modal.querySelectorAll(".mrow").forEach(row=>{
+    const i=+row.dataset.i,g=state.ingredients[i];
+    row.querySelector('[data-k="color"]').oninput=e=>{g.color=e.target.value;save();};
+    row.querySelector('[data-k="label"]').oninput=e=>{g.label=e.target.value||"Ingredient";save();};
+    row.querySelector('[data-k="dose"]').onchange=e=>{g.dose=+e.target.value;save();};
+    row.querySelector('[data-k="kind"]').onchange=e=>{g.kind=e.target.value;save();};
+    row.querySelector('[data-a="del"]').onclick=()=>{
+      if(!confirm("Remove ingredient \""+g.label+"\"? Its past pours are removed too."))return;
+      Object.keys(state.pours).forEach(d=>{if(state.pours[d][g.id]){delete state.pours[d][g.id];if(!Object.keys(state.pours[d]).length)delete state.pours[d];}});
+      state.ingredients.splice(i,1);save();ingredientsModal();};
+    row.querySelector(".ing-emoji").onclick=()=>{
+      const wrap=row.querySelector(".egwrap");
+      if(wrap.innerHTML){wrap.innerHTML="";return;}
+      const grid=document.createElement("div");grid.className="emojigrid";
+      EMOJIS.forEach(em=>{const b=document.createElement("button");b.textContent=em;
+        b.onclick=()=>{g.icon=em;save();row.querySelector(".ing-emoji").textContent=em;wrap.innerHTML="";};grid.appendChild(b);});
+      wrap.appendChild(grid);
+    };
+  });
+  modal.querySelector("#ingAdd").onclick=()=>{
+    state.ingredients.push({id:uid(),label:"New ingredient",icon:"🧉",color:"#4E7DA6",dose:3,kind:"work"});
+    save();ingredientsModal();};
+}
+/* ---------- week strip: the shape of your week, no hour grid */
+let weekOffset=0;
+function renderWeekStrip(){
+  const wrap=document.getElementById("weekStrip");if(!wrap)return;
+  if(state.daily.storm){wrap.innerHTML="";return;}
+  const wd=weekDates(weekOffset);
+  const today=todayISO();
+  const names=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  let cols="";
+  wd.forEach((d,i)=>{
+    const p=poursOf(d);
+    let shifts="";
+    state.ingredients.forEach(g=>{if(g.kind==="work"&&p[g.id])shifts+=`<div class="shift" style="background:${g.color}">${esc(g.icon)} ${esc(g.label.split(" ")[0])}${p[g.id]>=2?" ●●":""}</div>`;});
+    const load=workLoad(d);
+    const heavy=load>=3?`<div class="heavy" title="heavy day — one small thing is a win">🔥</div>`:"";
+    cols+=`<div class="wcol ${d===today?"today":""}" data-day="${d}">
+      <div class="dn">${names[i]}</div><div class="dt">${+d.slice(8)}</div>
+      <div class="shifts">${shifts}</div>
+      <div style="display:flex;justify-content:center">${glassSVG(p,22,28)}</div>
+      ${heavy}
+    </div>`;
+  });
+  const wl=weekOffset===0?"this week":(weekOffset===1?"next week":(weekOffset===-1?"last week":(weekOffset>0?"+"+weekOffset+" wks":weekOffset+" wks")));
+  wrap.innerHTML=`<div class="weekstrip"><div class="whead"><h3>📅 The week's shape</h3>
+    <span class="wnav"><button id="wPrev">‹</button><span class="wlabel">${wl}</span><button id="wNext">›</button></span></div>
+    <div class="wcols">${cols}</div>
+    <div class="wsub">Tap a day to pour its mix — mark shifts ahead, splashes after. 🔥 = the glass is mostly full before you plan anything; one small thing is a win there.</div></div>`;
+  wrap.querySelector("#wPrev").onclick=()=>{weekOffset--;renderWeekStrip();};
+  wrap.querySelector("#wNext").onclick=()=>{weekOffset++;renderWeekStrip();};
+  wrap.querySelectorAll(".wcol").forEach(el=>el.onclick=()=>dayMixModal(el.dataset.day));
+}
+function renderStorm(){
+  document.body.classList.toggle("storm",!!state.daily.storm);
+  const btn=document.getElementById("stormBtn");
+  if(btn)btn.textContent=state.daily.storm?"☀ End storm day":"⛈ Storm day";
+  const sg=document.getElementById("suggest");
+  if(sg)sg.style.display=state.daily.storm?"none":"";
+}
 /* ---------- Today three */
+
 function slotLabelOf(s){const tk=s.taskId?taskById(s.taskId):null;return tk?tk.t:(s.text||"");}
 function checkThreeWin(){
   if(state.daily.three.every(x=>x.d&&(x.taskId||x.text))){
@@ -947,6 +1220,18 @@ function addToToday(taskId){
 function renderThree(){
   document.getElementById("dayname").textContent=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][new Date().getDay()];
   const c=document.getElementById("three");c.innerHTML="";
+  const hint=document.getElementById("todayHint");
+  if(state.daily.storm){
+    if(hint)hint.textContent="Storm day. Nothing is due. The house holds.";
+    c.innerHTML=`<div style="background:rgba(255,255,255,.09);border-radius:10px;padding:14px;text-align:center;font-size:13px;color:#C9D4E4">⛈ → 🔥 Everything can wait until tomorrow. Rest IS maintenance — the foundation of the whole house.</div>`;
+    return;
+  }
+  if(hint){
+    const load=workLoad(todayISO());
+    hint.textContent=load>=3
+      ?"Heavy day — the glass is mostly poured already. One small thing is a real win today."
+      :"Drag a task in from the right — or tap ↑Today. It stays until you tick it done.";
+  }
   state.daily.three.forEach((s,i)=>{
     const pin=i===0?"BIG":"small";
     const label=slotLabelOf(s);
@@ -979,7 +1264,10 @@ function toggleTask(tk,val,ev){
       else toast("+1 furnished ✨");
     }else toast("Done ✓");
     if(ev)confetti(ev.clientX,ev.clientY);
-    if(state.daily.bricks.filter(Boolean).length<2)setTimeout(()=>toast("Running low 🔋 lay a foundation brick"),1100);
+    if(!state.daily.nagged&&state.daily.bricks.filter(Boolean).length===0){
+      state.daily.nagged=true;
+      setTimeout(()=>toast("psst — a foundation brick whenever you get a chance 🧱 no rush"),1200);
+    }
   }
   save();renderAll();
   if(val)checkThreeWin();
@@ -1102,6 +1390,7 @@ function taskRow(tk,ctxRoom){
 /* ---------- views */
 function renderInbox(){
   const wrap=document.getElementById("inboxWrap");wrap.innerHTML="";
+  if(state.daily.storm)return;
   if(state.view!=="rooms")return;
   const items=inboxTasks().sort((a,b)=>a.order-b.order);
   const sec=document.createElement("div");sec.className="cat inbox";
@@ -1422,6 +1711,14 @@ function renderNotes(wrap){
 }
 function renderTasks(){
   const wrap=document.getElementById("taskContent");wrap.innerHTML="";
+  if(state.daily.storm){
+    wrap.innerHTML=`<div class="cozycard"><div class="big">⛈🏡🔥</div>
+      <h3>The house is resting today</h3>
+      <p>Rain on the windows, fire in the fireplace. No tasks, no deadlines, no red — they'll all be exactly where you left them, and your streak is safe. Go be a person.</p>
+      <button id="endStorm">☀ Okay, the sky cleared</button></div>`;
+    wrap.querySelector("#endStorm").onclick=()=>{state.daily.storm=false;save();renderAll();toast("Welcome back 💛 the house missed you");};
+    return;
+  }
   if(state.view==="next")renderNextView(wrap);
   else if(state.view==="cal")renderCalendar(wrap);
   else if(state.view==="timeline")renderTimeline(wrap);
@@ -1442,7 +1739,7 @@ function renderBanner(){
     el.querySelector(".bx").onclick=()=>{ui.bannerDismissed=true;renderBanner();};
   }else el.innerHTML="";
 }
-function renderAll(){renderHUD();renderVision();renderHouse();renderGround();renderBricks();renderThree();renderToggle();renderBanner();renderInbox();renderTasks();}
+function renderAll(){renderHUD();renderVision();renderHouse();renderGround();renderBricks();renderStorm();renderCocktail();renderThree();renderToggle();renderBanner();renderWeekStrip();renderInbox();renderTasks();}
 
 /* ---------- modals */
 const overlay=document.getElementById("overlay"),modal=document.getElementById("modal");
@@ -1880,11 +2177,26 @@ document.getElementById("btnBlueprint").onclick=blueprintModal;
 document.getElementById("btnHelp").onclick=helpModal;
 document.getElementById("btnMail").onclick=mailboxModal;
 document.getElementById("btnGuide").onclick=()=>guideShow(0);
+document.getElementById("stormBtn").onclick=()=>{
+  if(state.daily.storm){
+    state.daily.storm=false;save();renderAll();toast("Welcome back 💛 the house missed you");
+  }else{
+    state.daily.storm=true;state.lastStorm=todayISO();save();renderAll();
+    toast("⛈ Storm day. The house holds. See you when the sky clears 💙",true);
+  }
+};
 document.getElementById("suggest").onclick=()=>{
   const tagOrder=id=>state.tags.findIndex(g=>g.id===id);
   const u=state.tasks.filter(t=>!t.d);
   u.sort((a,b)=>{const da=a.deadline||"9999",db=b.deadline||"9999";if(da!==db)return da<db?-1:1;return tagOrder(a.tagId)-tagOrder(b.tagId);});
   if(!u.length){toast("Everything's done — rest 💚");return;}
+  /* heavy days get ONE suggestion — the glass is already mostly poured */
+  if(workLoad(todayISO())>=3){
+    const small=u.find(t=>t.tagId!=="week")||u[0];
+    state.daily.three=[{taskId:small.id,text:"",d:false},{taskId:null,text:"",d:false},{taskId:null,text:"",d:false}];
+    save();renderThree();toast("Heavy day — just this one. Finishing it = winning today 🏆");
+    return;
+  }
   state.daily.three=[0,1,2].map(i=>u[i]?{taskId:u[i].id,text:"",d:false}:{taskId:null,text:"",d:false});
   save();renderThree();toast("Picked your top 3 by deadline ✨");
 };
@@ -1968,6 +2280,8 @@ try {
         const ids = all.docs.map(x => x.id).sort();
         while (ids.length > 14) await deleteDoc(doc(db, "users", auth.currentUser.uid, "backups", ids.shift()));
       }
+      const el = document.getElementById("backupInfo");
+      if (el) el.textContent = "🛟 Today's cloud backup ✓ — your house is safe to open anywhere";
     } catch (e) {}
   }
   window.__cloudBackups = {
