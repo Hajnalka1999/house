@@ -204,6 +204,12 @@
   .calchip{display:flex;align-items:flex-start;gap:4px;border-radius:6px;padding:2px 5px;font-size:10px;font-weight:700;cursor:grab;min-width:0;background:#fff;color:var(--navy)}
   .calchip .cdot{width:6px;height:6px;border-radius:2px;flex:none;margin-top:3px}
   .calchip .ct{min-width:0;overflow-wrap:anywhere;line-height:1.3}
+  .ingchip{cursor:pointer;color:#fff !important}
+  .ingchip .ct{color:#fff}
+  .hrchips{display:flex;gap:4px}
+  .hrchips button{border:1px solid var(--line);background:var(--sand);border-radius:6px;font-size:10px;font-weight:800;padding:3px 7px;cursor:pointer;color:var(--navy);font-family:inherit}
+  .hrchips button:hover{border-color:var(--green)}
+  .hoursline{font-size:11.5px;color:var(--muted);background:var(--sand);border-radius:8px;padding:6px 10px;margin:2px 0 8px;font-weight:600}
   .calchip.donechip{background:#EFEAE0;color:#A9A196}.calchip.donechip .ct{text-decoration:line-through}
   .calchip.evchip{background:#E3E9DC;color:var(--green)}
   .calchip.remchip{background:#FBF3E2;color:#8A6310}
@@ -672,7 +678,9 @@ function normalize(){
   if(!state.why)state.why=seedState().why;
   if(typeof state.rev!=="number")state.rev=0;
   if(!Array.isArray(state.ingredients)||!state.ingredients.length)state.ingredients=defaultIngredients();
-  state.ingredients.forEach(g=>{if(!g.id)g.id=uid();if(!g.icon)g.icon="🧉";if(!g.color)g.color="#3E8E7E";if(!g.dose)g.dose=3;if(g.kind!=="work"&&g.kind!=="life")g.kind="life";});
+  state.ingredients.forEach(g=>{if(!g.id)g.id=uid();if(!g.icon)g.icon="🧉";if(!g.color)g.color="#3E8E7E";if(!g.dose)g.dose=3;if(g.kind!=="work"&&g.kind!=="life")g.kind="life";
+    if(g.cal===undefined)g.cal=(g.kind==="work"); /* work shows on the calendar by default; everything is opt-in/out */});
+  if(state.calHideDone===undefined)state.calHideDone=false;
   if(typeof state.pours!=="object"||!state.pours)state.pours={};
   if(state.daily.storm===undefined)state.daily.storm=false;
   if(state.daily.nagged===undefined)state.daily.nagged=false;
@@ -1013,6 +1021,13 @@ function brickModal(){
 }
 /* ---------- cocktail bar: the week is a drink; ingredients are what it's mixed from */
 const DAY_CAP=6; /* pours that visually fill one day's glass */
+const HOURS_PER_POUR=2.5, WAKING_HOURS=15; /* a pour is roughly 2.5h of a ~15h waking day */
+function hoursLine(date){
+  const total=Object.values(poursOf(date)).reduce((a,b)=>a+b,0);
+  const used=Math.min(total*HOURS_PER_POUR,WAKING_HOURS);
+  const open=Math.max(0,WAKING_HOURS-used);
+  return {used,open,total};
+}
 function dateAddISO(iso,days){const d=new Date(iso+"T12:00");d.setDate(d.getDate()+days);return localISO(d);}
 function weekDates(offset){ /* Mon-Sun of current week + offset weeks */
   const t=new Date();const dow=(t.getDay()+6)%7;t.setDate(t.getDate()-dow+offset*7);
@@ -1082,7 +1097,7 @@ function renderCocktail(){
   card.innerHTML=`<div class="bhead"><h3>🍹 The mix</h3><button class="hidebtn" id="ingEdit">✎ ingredients</button></div>
     <div class="bsub">Tap what today contained — after it happened is fine. Nothing here needs scheduling.</div>
     <div class="barrow">
-      <div class="glasswrap">${glassSVG(todayMix,54,74)}<div class="glabel">TODAY</div></div>
+      <div class="glasswrap">${glassSVG(todayMix,54,74)}<div class="glabel">TODAY<br>≈ ${hoursLine(today).open}h open</div></div>
       <div class="pourgrid">${pourBtns}</div>
     </div>
     <div class="weekglasses">${wg}</div>
@@ -1100,23 +1115,32 @@ function dayMixModal(date){
   const label=d.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"short"});
   let rows="";
   state.ingredients.forEach(g=>{
+    const hr=g.kind==="work"?`<span class="hrchips">${[2,4,8].map(h=>`<button data-h="${h}" data-i="${g.id}">${h}h</button>`).join("")}</span>`:"";
     rows+=`<div class="mixrow" data-i="${g.id}"><span class="mi">${esc(g.icon)}</span><span class="ml">${esc(g.label)}${g.kind==="work"?' <span style="font-size:9px;color:var(--muted)">(fills the day)</span>':""}</span>
-      <span class="step"><button data-a="minus">−</button><span class="cnt">${poursOf(date)[g.id]||0}</span><button data-a="plus">+</button></span></div>`;
+      ${hr}<span class="step"><button data-a="minus">−</button><span class="cnt">${poursOf(date)[g.id]||0}</span><button data-a="plus">+</button></span></div>`;
   });
+  const hl=hoursLine(date);
   openModal(`<h2>🍹 ${esc(label)} <button class="mx">×</button></h2>
-    <p class="msub">What did (or will) this day contain? Work pours fill the glass — a full glass means the day honestly has no room left, and that's information, not failure.</p>
+    <p class="msub">What did (or will) this day contain? A pour ≈ ${HOURS_PER_POUR}h — exact hours are optional, never homework. The hour buttons are just shortcuts.</p>
+    <div class="hoursline" id="hoursLine">≈ ${hl.used}h accounted for · <b>≈ ${hl.open}h realistically open</b></div>
     ${rows}
     <div class="note">Tip: mark your hostel / tour shifts here in advance (2–3 pours each) — the week strip turns them into blocks so you can SEE where your time already went.</div>`);
   modal.querySelector(".mx").onclick=()=>{closeModal();renderCocktail();renderWeekStrip();renderThree();};
+  const refreshHours=()=>{const h=hoursLine(date);const el=modal.querySelector("#hoursLine");
+    if(el)el.innerHTML=`≈ ${h.used}h accounted for · <b>≈ ${h.open}h realistically open</b>`;};
   modal.querySelectorAll(".mixrow").forEach(row=>{
     const id=row.dataset.i;
-    row.querySelector('[data-a="plus"]').onclick=()=>{setPour(date,id,(poursOf(date)[id]||0)+1);row.querySelector(".cnt").textContent=poursOf(date)[id]||0;};
-    row.querySelector('[data-a="minus"]').onclick=()=>{setPour(date,id,(poursOf(date)[id]||0)-1);row.querySelector(".cnt").textContent=poursOf(date)[id]||0;};
+    row.querySelector('[data-a="plus"]').onclick=()=>{setPour(date,id,(poursOf(date)[id]||0)+1);row.querySelector(".cnt").textContent=poursOf(date)[id]||0;refreshHours();};
+    row.querySelector('[data-a="minus"]').onclick=()=>{setPour(date,id,(poursOf(date)[id]||0)-1);row.querySelector(".cnt").textContent=poursOf(date)[id]||0;refreshHours();};
+    row.querySelectorAll(".hrchips button").forEach(hb=>hb.onclick=()=>{
+      setPour(date,id,Math.max(1,Math.round(+hb.dataset.h/HOURS_PER_POUR)));
+      row.querySelector(".cnt").textContent=poursOf(date)[id]||0;refreshHours();
+    });
   });
 }
 function ingredientsModal(){
   let html=`<h2>🍹 Ingredients <button class="mx">×</button></h2>
-  <p class="msub">What does a good week taste like for you? Doses are per <b>week</b> — single days are allowed to be lopsided. "Fills the day" = paid work / shifts that eat time.</p>`;
+  <p class="msub">What does a good week taste like for you? Doses are per <b>week</b> — single days are allowed to be lopsided. "Fills the day" = paid work / shifts that eat time. 📅 = show this ingredient's pours on the calendar as a tiny note.</p>`;
   state.ingredients.forEach((g,i)=>{
     html+=`<div class="mrow" data-i="${i}">
       <button class="mini ing-emoji" style="font-size:16px">${esc(g.icon)}</button>
@@ -1124,6 +1148,7 @@ function ingredientsModal(){
       <input type="text" value="${esc(g.label)}" data-k="label" maxlength="22">
       <select data-k="dose">${[1,2,3,4,5,6,7,10,14].map(n=>`<option value="${n}" ${g.dose===n?"selected":""}>${n}×/wk</option>`).join("")}</select>
       <select data-k="kind"><option value="life" ${g.kind==="life"?"selected":""}>sweetness</option><option value="work" ${g.kind==="work"?"selected":""}>fills the day</option></select>
+      <label style="font-size:10.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:3px;cursor:pointer"><input type="checkbox" data-k="cal" ${g.cal?"checked":""} style="accent-color:var(--navy)">📅</label>
       <button class="mini" data-a="del" ${state.ingredients.length<=2?"disabled":""}>🗑</button>
       <span class="egwrap" style="width:100%"></span>
     </div>`;
@@ -1137,6 +1162,7 @@ function ingredientsModal(){
     row.querySelector('[data-k="label"]').oninput=e=>{g.label=e.target.value||"Ingredient";save();};
     row.querySelector('[data-k="dose"]').onchange=e=>{g.dose=+e.target.value;save();};
     row.querySelector('[data-k="kind"]').onchange=e=>{g.kind=e.target.value;save();};
+    row.querySelector('[data-k="cal"]').onchange=e=>{g.cal=e.target.checked;save();};
     row.querySelector('[data-a="del"]').onclick=()=>{
       if(!confirm("Remove ingredient \""+g.label+"\"? Its past pours are removed too."))return;
       Object.keys(state.pours).forEach(d=>{if(state.pours[d][g.id]){delete state.pours[d][g.id];if(!Object.keys(state.pours[d]).length)delete state.pours[d];}});
@@ -1501,10 +1527,22 @@ function chipEl(kind,o,label,dotColor,extraClass,full){
 }
 function chipsFor(iso){
   const chips=[];
+  /* cocktail pours as the briefest possible note — which days are already poured away */
+  state.ingredients.forEach(g=>{
+    if(!g.cal)return;
+    const n=poursOf(iso)[g.id]||0;if(!n)return;
+    const el=document.createElement("div");
+    el.className="calchip ingchip";
+    el.style.background=g.color;
+    el.title=g.label+" — "+n+" pour"+(n>1?"s":"")+" ≈ "+(n*HOURS_PER_POUR)+"h · tap to edit this day's mix";
+    el.innerHTML=`<span class="ct">${esc(g.icon)} ${esc(g.label.split(" ")[0])}${n>=2?" ●●":""}</span>`;
+    el.onclick=e=>{e.stopPropagation();dayMixModal(iso);};
+    chips.push(el);
+  });
   state.events.filter(ev=>eventCovers(ev,iso)).forEach(ev=>{
     chips.push(chipEl("event",ev,"🎊 "+ev.t,"#3E7C6E","evchip","Event — the house is hosting: "+ev.t+(ev.dateEnd&&ev.dateEnd>ev.date?" ("+ev.date+" → "+ev.dateEnd+")":"")));
   });
-  state.tasks.filter(t=>t.deadline===iso).forEach(t=>{
+  state.tasks.filter(t=>t.deadline===iso&&!(state.calHideDone&&t.d)).forEach(t=>{
     const room=t.roomIds[0]?roomById(t.roomIds[0]):null;
     chips.push(chipEl("task",t,(t.milestone?"🚩 ":"")+t.t,room?room.dot:"#B29A62",t.d?"donechip":"",t.t+(t.details?" — "+t.details:"")));
   });
@@ -1555,6 +1593,7 @@ function renderCalendar(wrap){
         <button id="calMW" class="${ui.calMode==="week"?"on":""}">Week</button>
       </div>
       <button class="todaybtn" id="calAdd">+ reminder / event</button>
+      <button class="hidebtn ${state.calHideDone?"on":""}" id="calHide">${state.calHideDone?"Show done":"Hide done"}</button>
     </div>
     <div class="calhint">Drag any task, reminder or event onto another day to move its date. Drag a task from the lists here too.</div>
     <div class="dnames">${dayNames.map(n=>`<div class="dname">${n}</div>`).join("")}</div>`;
@@ -1576,6 +1615,7 @@ function renderCalendar(wrap){
   }
   sec.appendChild(grid);
   wrap.appendChild(sec);
+  sec.querySelector("#calHide").onclick=()=>{state.calHideDone=!state.calHideDone;save();renderTasks();};
   sec.querySelector("#calPrev").onclick=()=>{
     if(ui.calMode==="month"){const m=cal.m-1;ui.cal={y:m<0?cal.y-1:cal.y,m:(m+12)%12};}
     else ui.weekOff--;
